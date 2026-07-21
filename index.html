@@ -3,25 +3,308 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DreamWorks</title>
+  <title>DreamWorks. Construction, Garden, Development &amp; Signage.</title>
+  <meta name="description" content="DreamWorks is a Dutch multi-disciplinary contractor: garden and landscaping, carpentry, demolition, property development, and advertising and signage. One point of contact, five trades.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header>
-    <img src="assets/images/logo-dreamworks.png" alt="DreamWorks logo" class="logo">
-    <h1>DreamWorks</h1>
-    <p>Welcome to the project.</p>
-  </header>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <main>
-    <section id="about">
-      <h2>About</h2>
-      <p>This is the starting point for the site. Replace this content as the project grows.</p>
+  <nav class="nav" id="nav">
+    <a class="nav__brand" href="#home">
+      <img src="assets/images/logo-dreamworks.png" alt="DreamWorks" class="nav__logo">
+    </a>
+    <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
+      <span class="sr-only">Menu</span>
+      <span class="nav__toggle-bar"></span>
+    </button>
+    <div class="nav__menu" id="nav-menu">
+      <a href="#garden">Garden</a>
+      <a href="#carpentry">Carpentry</a>
+      <a href="#demolition">Demolition</a>
+      <a href="#development">Development</a>
+      <a href="#signage">Signage</a>
+      <a href="#contact" class="nav__cta">Get a quote</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="hero" id="home" data-scene>
+      <video class="hero__bg" muted loop playsinline preload="auto" poster="assets/images/hero-interior-poster.png" aria-hidden="true">
+        <source src="assets/video/hero-interior.mp4" type="video/mp4">
+      </video>
+      <div class="hero__scrim"></div>
+      <div class="hero__content">
+        <p class="hero__eyebrow load-in load-in--1">Construction · Garden · Property Development · Advertising</p>
+        <h1 class="hero__title load-in load-in--2">One roof.<br>Five trades.<br>Every job, start to finish.</h1>
+        <p class="hero__subhead load-in load-in--3">DreamWorks is a Dutch multi-disciplinary contractor. Garden, carpentry, demolition, development, and signage, coordinated by one point of contact from the first sketch to the final handover.</p>
+        <div class="hero__actions load-in load-in--4">
+          <a class="btn btn--primary" href="#contact">Get a quote</a>
+          <a class="btn btn--ghost" href="#garden">See what we do</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="values" aria-label="Why DreamWorks">
+      <ul class="values__list">
+        <li>One point of contact</li>
+        <li>From design to delivery</li>
+        <li>Craftsmen under one roof</li>
+        <li>Quality &amp; guarantee</li>
+        <li>Clear communication</li>
+      </ul>
+    </section>
+
+    <section class="process reveal" id="process" aria-labelledby="process-heading">
+      <h2 id="process-heading" class="process__heading">How we work</h2>
+      <ol class="process__steps">
+        <li class="process__step">
+          <span class="process__number">01</span>
+          <h3>Design</h3>
+          <p>We visit the site, scope every trade involved, and put one clear quote in front of you. Not five.</p>
+        </li>
+        <li class="process__step">
+          <span class="process__number">02</span>
+          <h3>Build</h3>
+          <p>Our own craftsmen carry it out under one schedule, so garden, structural, and finishing work never collide.</p>
+        </li>
+        <li class="process__step">
+          <span class="process__number">03</span>
+          <h3>Deliver</h3>
+          <p>You get a handover, a guarantee, and one number to call if anything needs attention afterwards.</p>
+        </li>
+      </ol>
+    </section>
+
+    <div class="seam seam--garden" aria-hidden="true"></div>
+
+    <section class="world reveal" id="garden" data-world="garden" aria-labelledby="garden-heading">
+      <div class="world__bg" aria-hidden="true"></div>
+      <div class="world__grain" aria-hidden="true"></div>
+      <div class="world__mid">
+        <video muted loop playsinline preload="auto" poster="assets/images/service-garden-poster.png" aria-label="A finished garden with a wooden summerhouse, a freshly planted flower bed, a greenhouse, and a lawn.">
+          <source src="assets/video/garden-transformation.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="world__content">
+        <p class="world__label">Garden &amp; Landscaping</p>
+        <h2 id="garden-heading" class="world__title">
+          <span class="line"><span>Gardens built</span></span>
+          <span class="line"><span>to hold up</span></span>
+          <span class="line"><span>outdoors.</span></span>
+        </h2>
+        <p class="world__copy">We design and build gardens from the first sketch to the last paving stone. Our teams lay natural stone and paving, build timber decking and pergolas, install fencing and carports, and lay artificial grass where real grass won't take the traffic. Once it's built, we keep it looking that way with ongoing maintenance.</p>
+        <ul class="world__spec">
+          <li>Garden design &amp; construction</li>
+          <li>Garden maintenance</li>
+          <li>Paving</li>
+          <li>Fencing</li>
+          <li>Carports &amp; canopies</li>
+          <li>Decking</li>
+          <li>Artificial grass</li>
+          <li>Planting</li>
+        </ul>
+        <a class="world__cta" href="#contact">Get a garden quote</a>
+      </div>
+    </section>
+
+    <div class="seam seam--carpentry" aria-hidden="true"></div>
+
+    <section class="world world--reverse reveal" id="carpentry" data-world="carpentry" aria-labelledby="carpentry-heading">
+      <div class="world__bg" aria-hidden="true"></div>
+      <div class="world__grain" aria-hidden="true"></div>
+      <div class="world__mid">
+        <img src="assets/images/service-carpentry.png" alt="A carpentry workshop with a half-built oak kitchen cabinet frame, wood shavings on the floor, and hand tools on a workbench." loading="lazy">
+      </div>
+      <div class="world__content">
+        <p class="world__label">Carpentry</p>
+        <h2 id="carpentry-heading" class="world__title">
+          <span class="line"><span>Built to</span></span>
+          <span class="line"><span>the millimeter.</span></span>
+        </h2>
+        <p class="world__copy">Our carpenters build the things you touch every day: kitchens, cabinetry, window and door frames, ceilings, and flooring, cut and joined on site or in the workshop, then fitted precisely. If a renovation calls for custom furniture or a full room rebuild, the same team handles both.</p>
+        <ul class="world__spec">
+          <li>Custom furniture</li>
+          <li>Kitchens</li>
+          <li>Cabinetry</li>
+          <li>Window &amp; door frames</li>
+          <li>Doors</li>
+          <li>Ceilings</li>
+          <li>Flooring</li>
+          <li>Renovations</li>
+        </ul>
+        <a class="world__cta" href="#contact">Get a carpentry quote</a>
+      </div>
+    </section>
+
+    <div class="seam seam--demolition" aria-hidden="true"></div>
+
+    <section class="world reveal" id="demolition" data-world="demolition" aria-labelledby="demolition-heading">
+      <div class="world__bg" aria-hidden="true"></div>
+      <div class="world__grain" aria-hidden="true"></div>
+      <div class="world__mid">
+        <img src="assets/images/service-demolition.png" alt="A demolition site with a partially demolished wall exposing brick and rebar, concrete rubble, and a hydraulic breaker." loading="lazy">
+      </div>
+      <div class="world__content">
+        <p class="world__label">Demolition</p>
+        <h2 id="demolition-heading" class="world__title">
+          <span class="line"><span>Cleared fast,</span></span>
+          <span class="line"><span>cleared right.</span></span>
+        </h2>
+        <p class="world__copy">Before anything gets built, something often has to come down. We handle full demolition, bathroom and kitchen strip-outs, and general strip-out work, plus concrete cutting and drilling where a wall needs to open cleanly. We haul the waste away too, so the site is ready for the next trade the same week.</p>
+        <ul class="world__spec">
+          <li>Full demolition</li>
+          <li>Bathroom strip-outs</li>
+          <li>Kitchen strip-outs</li>
+          <li>General strip-out work</li>
+          <li>Concrete cutting &amp; drilling</li>
+          <li>Construction waste removal</li>
+        </ul>
+        <a class="world__cta" href="#contact">Get a demolition quote</a>
+      </div>
+    </section>
+
+    <div class="seam seam--development" aria-hidden="true"></div>
+
+    <section class="world world--reverse reveal" id="development" data-world="development" aria-labelledby="development-heading">
+      <div class="world__bg" aria-hidden="true"></div>
+      <div class="world__grain" aria-hidden="true"></div>
+      <div class="world__mid">
+        <img src="assets/images/service-development.png" alt="A new-build construction site at dusk with a structural steel and concrete frame, a crane, and blueprints laid on a site table." loading="lazy">
+      </div>
+      <div class="world__content">
+        <p class="world__label">Property Development</p>
+        <h2 id="development-heading" class="world__title">
+          <span class="line"><span>From acquisition</span></span>
+          <span class="line"><span>to delivery.</span></span>
+        </h2>
+        <p class="world__copy">We buy, develop, and transform property: new-build construction, renovation, and full transformation projects, backed by our own permit management so approvals don't stall the timeline. For investors, we manage the project as our own, from acquisition to delivery.</p>
+        <ul class="world__spec">
+          <li>Real estate acquisition</li>
+          <li>Development</li>
+          <li>New-build construction</li>
+          <li>Renovation</li>
+          <li>Transformation</li>
+          <li>Permit management</li>
+          <li>Investment projects</li>
+        </ul>
+        <a class="world__cta" href="#contact">Talk to us about a project</a>
+      </div>
+    </section>
+
+    <div class="seam seam--signage" aria-hidden="true"></div>
+
+    <section class="world world--signage reveal" id="signage" data-world="signage" aria-labelledby="signage-heading">
+      <div class="world__scene">
+        <div class="world__flicker" aria-hidden="true"></div>
+        <video class="world__bg-image" muted loop playsinline preload="auto" poster="assets/images/service-signage-poster.png" aria-hidden="true">
+          <source src="assets/video/signage-fabrication-laser.mp4" type="video/mp4">
+        </video>
+        <div class="world__scrim" aria-hidden="true"></div>
+        <div class="world__content world__content--overlay">
+          <p class="world__label">Advertising &amp; Signage</p>
+          <h2 id="signage-heading" class="world__title world__title--ignite">Visible on the street.</h2>
+          <p class="world__copy">Signage is where DreamWorks becomes visible on the street: facade advertising, illuminated signage, LED lettering, vehicle wraps and lettering, window film, signboards, banners, and interior signage. We design it, fabricate it, and install it, usually for the same buildings we've just finished building.</p>
+          <ul class="world__spec">
+            <li>Facade advertising</li>
+            <li>Illuminated signage</li>
+            <li>LED lettering</li>
+            <li>Vehicle wraps &amp; lettering</li>
+            <li>Window film</li>
+            <li>Signboards</li>
+            <li>Banners</li>
+            <li>Interior signage</li>
+          </ul>
+          <a class="world__cta" href="#contact">Get a signage quote</a>
+        </div>
+      </div>
+
+      <div class="world__gallery">
+        <p class="world__gallery-label">Recent signage work</p>
+        <ul class="world__gallery-grid">
+          <li class="world__gallery-item">
+            <img src="assets/images/work/signage-dunkin.png" alt="A backlit illuminated LED sign shaped like a to-go cup with the letter D, mounted on a wood panel wall." loading="lazy">
+            <span>Illuminated LED signage</span>
+          </li>
+          <li class="world__gallery-item">
+            <img src="assets/images/work/signage-smashed.jpeg" alt="A backlit facade sign reading Smashed with a fist icon, mounted on a concrete wall." loading="lazy">
+            <span>Facade lettering</span>
+          </li>
+          <li class="world__gallery-item">
+            <img src="assets/images/work/signage-jut-jul.jpeg" alt="An illuminated round projecting sign reading Jut and Jul, mounted on a brick building at dusk." loading="lazy">
+            <span>Projecting signage</span>
+          </li>
+          <li class="world__gallery-item world__gallery-item--video">
+            <video muted loop playsinline preload="auto" poster="assets/images/work/signage-fabrication-cnc-poster.png" aria-label="CNC cutting machine fabricating a signage panel in the workshop.">
+              <source src="assets/video/signage-fabrication-cnc.mp4" type="video/mp4">
+            </video>
+            <span>Cut and fabricated in-house</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="contact reveal" id="contact" aria-labelledby="contact-heading">
+      <div class="contact__intro">
+        <h2 id="contact-heading">One call for every trade</h2>
+        <p>Tell us what you need. We'll match it to the right trade internally and come back with one clear quote, not five separate ones.</p>
+        <dl class="contact__details">
+          <div><dt>Phone</dt><dd><a href="tel:+31000000000">+31 (0)00 000 0000</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:info@dreamworks-nl.example">info@dreamworks-nl.example</a></dd></div>
+        </dl>
+        <p class="contact__note">Placeholder phone number and email. Swap in DreamWorks' real contact details before launch.</p>
+      </div>
+      <form class="contact__form" method="post" action="mailto:info@dreamworks-nl.example" enctype="text/plain">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="phone">Phone <span class="field__optional">(optional)</span></label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="service">Which trade is this for?</label>
+          <select id="service" name="service" required>
+            <option value="">Select one</option>
+            <option value="garden">Garden &amp; Landscaping</option>
+            <option value="carpentry">Carpentry</option>
+            <option value="demolition">Demolition</option>
+            <option value="development">Property Development</option>
+            <option value="signage">Advertising &amp; Signage</option>
+            <option value="multiple">Not sure / more than one</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Tell us about the job</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary">Send request</button>
+      </form>
     </section>
   </main>
 
-  <footer>
-    <p>&copy; 2026 DreamWorks</p>
+  <footer class="footer">
+    <div class="footer__brand">
+      <img src="assets/images/logo-dreamworks.png" alt="DreamWorks" class="footer__logo">
+      <p>One roof, five trades: garden, carpentry, demolition, development, and signage.</p>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="#garden">Garden</a>
+      <a href="#carpentry">Carpentry</a>
+      <a href="#demolition">Demolition</a>
+      <a href="#development">Development</a>
+      <a href="#signage">Signage</a>
+      <a href="#contact">Get a quote</a>
+    </nav>
+    <p class="footer__copy">&copy; <span id="year"></span> DreamWorks</p>
   </footer>
 
   <script src="js/main.js"></script>
