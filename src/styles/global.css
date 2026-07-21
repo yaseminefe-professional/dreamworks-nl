@@ -168,10 +168,13 @@ ul, ol, dl {
 
 .nav__toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
 }
 
 .nav__toggle-bar,
@@ -291,7 +294,7 @@ ul, ol, dl {
 
 @media (max-width: 760px) {
   .nav__toggle {
-    display: block;
+    display: flex;
   }
   .nav__links {
     display: none;
@@ -303,6 +306,7 @@ ul, ol, dl {
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -466,6 +470,7 @@ ul, ol, dl {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   color: var(--world-fg, var(--ink));
   isolation: isolate;
@@ -613,6 +618,7 @@ ul, ol, dl {
 .world--signage {
   display: block;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #101014;
   --world-fg: #f5f4ef;
   --world-accent: #ff3ea5;
@@ -621,6 +627,7 @@ ul, ol, dl {
 .world--signage .world__scene {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   isolation: isolate;
 }
@@ -652,6 +659,7 @@ ul, ol, dl {
   z-index: 4;
   max-width: 720px;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: clamp(2rem, 5vw, 4.5rem);
   margin: 0 auto;
   display: flex;
