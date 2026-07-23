@@ -134,17 +134,83 @@ function DetailOverlay({ item, motionEnabled, onClose }) {
   );
 }
 
+const AUTO_TOUR_ORDER = ["floor", "cabinetry", "wall"];
+const AUTO_TOUR_STEP_MS = 2600;
+const AUTO_TOUR_DWELL_MS = 700;
+
 function InteriorExperience({ motionEnabled }) {
   const [active, setActive] = useState(null);
   const activeSpot = spots.find((s) => s.key === active) || null;
 
+  const sentinelRef = useRef(null);
+  const interactedRef = useRef(false);
+  const tourStartedRef = useRef(false);
+  const tourCancelledRef = useRef(false);
+
+  function closeDetail() {
+    interactedRef.current = true;
+    tourCancelledRef.current = true;
+    document.body.style.overflow = "";
+    setActive(null);
+  }
+
+  function openDetail(key) {
+    interactedRef.current = true;
+    tourCancelledRef.current = true;
+    document.body.style.overflow = "";
+    setActive(key);
+  }
+
   useEffect(() => {
     function onKey(e) {
-      if (e.key === "Escape") setActive(null);
+      if (e.key === "Escape") closeDetail();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  useEffect(() => {
+    if (!motionEnabled) return undefined;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return undefined;
+
+    let dwellTimer = null;
+
+    async function runAutoTour() {
+      document.body.style.overflow = "hidden";
+      for (const key of AUTO_TOUR_ORDER) {
+        if (tourCancelledRef.current) break;
+        setActive(key);
+        await new Promise((resolve) => setTimeout(resolve, AUTO_TOUR_STEP_MS));
+      }
+      if (!tourCancelledRef.current) setActive(null);
+      document.body.style.overflow = "";
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !interactedRef.current && !tourStartedRef.current) {
+          dwellTimer = setTimeout(() => {
+            if (!interactedRef.current && !tourStartedRef.current) {
+              tourStartedRef.current = true;
+              runAutoTour();
+            }
+          }, AUTO_TOUR_DWELL_MS);
+        } else if (dwellTimer) {
+          clearTimeout(dwellTimer);
+          dwellTimer = null;
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(sentinel);
+    return () => {
+      observer.disconnect();
+      if (dwellTimer) clearTimeout(dwellTimer);
+      document.body.style.overflow = "";
+    };
+  }, [motionEnabled]);
 
   return (
     <section className="interior" aria-label="Inside DreamWorks: click a spot to see the craftsmanship">
@@ -158,7 +224,7 @@ function InteriorExperience({ motionEnabled }) {
             type="button"
             className="interior__hotspot"
             style={{ left: spot.left, top: spot.top }}
-            onClick={() => setActive(spot.key)}
+            onClick={() => openDetail(spot.key)}
             aria-label={`See ${spot.label} in detail`}
           >
             <span className="interior__hotspot-dot" />
@@ -168,8 +234,10 @@ function InteriorExperience({ motionEnabled }) {
       </div>
 
       <AnimatePresence>
-        {activeSpot && <DetailOverlay item={activeSpot} motionEnabled={motionEnabled} onClose={() => setActive(null)} />}
+        {activeSpot && <DetailOverlay item={activeSpot} motionEnabled={motionEnabled} onClose={closeDetail} />}
       </AnimatePresence>
+
+      <div ref={sentinelRef} className="interior__sentinel" aria-hidden="true" />
     </section>
   );
 }
