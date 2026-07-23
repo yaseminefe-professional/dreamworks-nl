@@ -14,6 +14,35 @@ const textItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeOut } },
 };
 
+const carpentryServices = ["Custom furniture", "Kitchen", "Cabinetry", "Window and door frames", "Doors", "Ceilings"];
+
+const floorServices = [
+  "Hardwood and parquet flooring",
+  "Tile and natural stone flooring",
+  "Vinyl and laminate flooring",
+  "Underfloor heating installation",
+  "Floor preparation and levelling",
+];
+
+const wallServices = [
+  "Interior and exterior painting",
+  "Wallpaper installation and removal",
+  "Plastering and skimming",
+  "Drywall installation and repairs",
+  "Decorative wall finishes",
+];
+
+const signageServices = [
+  "Facade advertising",
+  "Illuminated signage",
+  "LED lettering",
+  "Vehicle wraps & lettering",
+  "Window film",
+  "Signboards",
+  "Banners",
+  "Interior signage",
+];
+
 const spots = [
   {
     key: "floor",
@@ -21,9 +50,11 @@ const spots = [
     left: "31%",
     top: "76%",
     src: "assets/act0/storefront-floor-macro.jpg",
+    backdrop: "assets/act0/storefront-drone.jpg",
     alt: "Extreme close-up of the light natural stone floor, showing the grain and texture of the material.",
     head: "Handcrafted flooring.",
-    sub: "Cut, laid, and finished by hand.",
+    sub: "Our flooring work:",
+    services: floorServices,
   },
   {
     key: "wall",
@@ -31,9 +62,11 @@ const spots = [
     left: "89%",
     top: "42%",
     src: "assets/act0/storefront-wall-macro.jpg",
-    alt: "Extreme close-up of a freshly painted interior wall, showing the smooth plaster and paint finish.",
-    head: "Interior painting & finishing.",
-    sub: "Every wall prepared and painted with care.",
+    backdrop: "assets/act0/storefront-drone.jpg",
+    alt: "Extreme close-up of a freshly painted interior wall, showing a smooth, glossy paint finish.",
+    head: "Every wall, finished with care.",
+    sub: "Our wall finishing work:",
+    services: wallServices,
   },
   {
     key: "cabinetry",
@@ -41,11 +74,67 @@ const spots = [
     left: "64%",
     top: "58%",
     src: "assets/act0/storefront-cabinetry.jpg",
+    backdrop: "assets/act0/storefront-drone.jpg",
     alt: "Close-up of custom oak cabinetry showing precise dovetail joinery and blackened-steel hardware.",
     head: "Custom carpentry.",
-    sub: "Built in-house, joint by joint.",
+    sub: "Built in-house, joint by joint. Our carpentry work:",
+    services: carpentryServices,
   },
 ];
+
+const signageSpot = {
+  key: "signage",
+  label: "Signage",
+  left: "42%",
+  top: "24%",
+  src: "assets/act0/facade-after.jpg",
+  backdrop: "assets/act0/facade-after.jpg",
+  alt: "The lit DreamWorks sign glowing above the shopfront entrance at night.",
+  head: "Advertising & signage.",
+  sub: "Everything it takes to be seen:",
+  services: signageServices,
+};
+
+function DetailOverlay({ item, motionEnabled, onClose }) {
+  return (
+    <motion.div
+      className="interior__detail"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.35, ease: easeOut }}
+      onClick={onClose}
+    >
+      <img className="interior__detail-backdrop" src={asset(item.backdrop)} alt="" />
+      <div className="interior__detail-backdrop-scrim" />
+
+      <motion.div
+        className="interior__detail-card"
+        initial={motionEnabled ? { opacity: 0, scale: 0.95 } : false}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: easeOut }}
+      >
+        <img className="interior__detail-img" src={asset(item.src)} alt={item.alt} />
+      </motion.div>
+
+      <div className="interior__detail-text">
+        <p className="interior__detail-head">{item.head}</p>
+        <p className="interior__detail-sub">{item.sub}</p>
+        {item.services && (
+          <ul className="service-list">
+            {item.services.map((service) => (
+              <li key={service}>{service}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <button type="button" className="interior__detail-close" onClick={onClose} aria-label="Back to overview">
+        &times;
+      </button>
+    </motion.div>
+  );
+}
 
 function InteriorExperience({ motionEnabled }) {
   const [active, setActive] = useState(null);
@@ -81,39 +170,48 @@ function InteriorExperience({ motionEnabled }) {
       </div>
 
       <AnimatePresence>
-        {activeSpot && (
-          <motion.div
-            className="interior__detail"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: easeOut }}
-            onClick={() => setActive(null)}
-          >
-            <motion.img
-              className="interior__detail-img"
-              src={asset(activeSpot.src)}
-              alt={activeSpot.alt}
-              initial={motionEnabled ? { scale: 1.15 } : false}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.6, ease: easeOut }}
-            />
-            <div className="interior__detail-scrim" />
-            <div className="interior__detail-text">
-              <p className="zoom__caption-head">{activeSpot.head}</p>
-              <p className="zoom__caption-sub">{activeSpot.sub}</p>
-            </div>
-            <button type="button" className="interior__detail-close" onClick={() => setActive(null)} aria-label="Back to overview">
-              &times;
-            </button>
-          </motion.div>
-        )}
+        {activeSpot && <DetailOverlay item={activeSpot} motionEnabled={motionEnabled} onClose={() => setActive(null)} />}
       </AnimatePresence>
     </section>
   );
 }
 
+function SignageHotspot({ opacityStyle, pointerEventsStyle, motionEnabled }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <>
+      <motion.div className="interior__hotspots" style={{ opacity: opacityStyle, pointerEvents: pointerEventsStyle }}>
+        <button
+          type="button"
+          className="interior__hotspot"
+          style={{ left: signageSpot.left, top: signageSpot.top }}
+          onClick={() => setOpen(true)}
+          aria-label={`See ${signageSpot.label} in detail`}
+        >
+          <span className="interior__hotspot-dot" />
+          <span className="interior__hotspot-label">{signageSpot.label}</span>
+        </button>
+      </motion.div>
+
+      <AnimatePresence>
+        {open && <DetailOverlay item={signageSpot} motionEnabled={motionEnabled} onClose={() => setOpen(false)} />}
+      </AnimatePresence>
+    </>
+  );
+}
+
 function StaticHero() {
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       <header className="hero hero--static" id="home">
@@ -128,6 +226,21 @@ function StaticHero() {
           </h1>
           <p className="hero__subhead">A business that can&rsquo;t be seen doesn&rsquo;t exist yet. We make sure yours does.</p>
         </div>
+        <div className="interior__hotspots">
+          <button
+            type="button"
+            className="interior__hotspot"
+            style={{ left: signageSpot.left, top: signageSpot.top }}
+            onClick={() => setOpen(true)}
+            aria-label={`See ${signageSpot.label} in detail`}
+          >
+            <span className="interior__hotspot-dot" />
+            <span className="interior__hotspot-label">{signageSpot.label}</span>
+          </button>
+        </div>
+        <AnimatePresence>
+          {open && <DetailOverlay item={signageSpot} motionEnabled={false} onClose={() => setOpen(false)} />}
+        </AnimatePresence>
       </header>
       <InteriorExperience motionEnabled={false} />
     </>
@@ -157,6 +270,9 @@ export default function Act0Hero() {
   const beforeOpacity = useTransform(p, [0, 0.32, 0.45], [1, 1, 0]);
   const afterOpacity = useTransform(p, [0.28, 0.45, 1], [0, 1, 1]);
   const facadeScale = useTransform(p, [0, 1], [1, 1.4]);
+
+  const signageHotspotOpacity = useTransform(p, [0.45, 0.55], [0, 1]);
+  const signageHotspotPointerEvents = useTransform(p, (v) => (v > 0.45 ? "auto" : "none"));
 
   if (prefersReducedMotion) {
     return <StaticHero />;
@@ -201,6 +317,8 @@ export default function Act0Hero() {
               A business that can&rsquo;t be seen doesn&rsquo;t exist yet. We make sure yours does.
             </motion.p>
           </motion.div>
+
+          <SignageHotspot opacityStyle={signageHotspotOpacity} pointerEventsStyle={signageHotspotPointerEvents} motionEnabled={!prefersReducedMotion} />
 
           <motion.div className="hero-build__cue" style={{ opacity: cueOpacity }}>
             <span className="hero-build__mouse" />
