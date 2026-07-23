@@ -371,14 +371,7 @@ img {
   position: absolute;
   inset: 0;
   z-index: 7;
-  overflow-y: auto;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1.5rem, 3vw, 2.5rem);
-  padding: clamp(4.5rem, 8vw, 6rem) var(--gap) clamp(2rem, 5vw, 3rem);
 }
 
 .interior__detail-backdrop {
@@ -389,36 +382,42 @@ img {
   object-fit: cover;
   filter: blur(32px);
   transform: scale(1.15);
+  opacity: 0.5;
 }
 
-.interior__detail-backdrop-scrim {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 11, 12, 0.6);
-}
-
-.interior__detail-card {
-  position: relative;
+.interior__detail-frame {
+  position: absolute;
+  inset: 1cm;
   z-index: 1;
-  width: min(100%, 1000px);
-  height: min(46vh, 480px);
-  flex-shrink: 0;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
 }
 
 .interior__detail-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
+.interior__detail-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(10, 11, 12, 0.88) 0%, rgba(10, 11, 12, 0.2) 40%, transparent 62%);
+}
+
 .interior__detail-text {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1;
-  width: min(100%, 1000px);
   color: var(--paper);
+  padding: 0 clamp(1.5rem, 4vw, 3.5rem) clamp(2rem, 5vw, 3.5rem);
+  max-height: 80%;
+  overflow-y: auto;
 }
 
 .interior__detail-head {
@@ -439,6 +438,7 @@ img {
   position: absolute;
   top: 1.25rem;
   right: var(--gap);
+  z-index: 2;
   width: 44px;
   height: 44px;
   border-radius: 50%;

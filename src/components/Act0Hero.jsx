@@ -3,7 +3,6 @@ import { AnimatePresence, motion, useScroll, useTransform, useSpring, useReduced
 import { asset } from "../lib/asset.js";
 
 const easeOut = [0.23, 1, 0.32, 1];
-const DOOR_ORIGIN = "38% 58%";
 
 const textContainer = {
   hidden: {},
@@ -106,28 +105,27 @@ function DetailOverlay({ item, motionEnabled, onClose }) {
       onClick={onClose}
     >
       <img className="interior__detail-backdrop" src={asset(item.backdrop)} alt="" />
-      <div className="interior__detail-backdrop-scrim" />
 
       <motion.div
-        className="interior__detail-card"
-        initial={motionEnabled ? { opacity: 0, scale: 0.95 } : false}
+        className="interior__detail-frame"
+        initial={motionEnabled ? { opacity: 0, scale: 0.97 } : false}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: easeOut }}
       >
         <img className="interior__detail-img" src={asset(item.src)} alt={item.alt} />
+        <div className="interior__detail-scrim" />
+        <div className="interior__detail-text">
+          <p className="interior__detail-head">{item.head}</p>
+          <p className="interior__detail-sub">{item.sub}</p>
+          {item.services && (
+            <ul className="service-list">
+              {item.services.map((service) => (
+                <li key={service}>{service}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       </motion.div>
-
-      <div className="interior__detail-text">
-        <p className="interior__detail-head">{item.head}</p>
-        <p className="interior__detail-sub">{item.sub}</p>
-        {item.services && (
-          <ul className="service-list">
-            {item.services.map((service) => (
-              <li key={service}>{service}</li>
-            ))}
-          </ul>
-        )}
-      </div>
 
       <button type="button" className="interior__detail-close" onClick={onClose} aria-label="Back to overview">
         &times;
@@ -264,15 +262,15 @@ export default function Act0Hero() {
   const heroTextOpacity = useTransform(p, [0, 0.25, 0.4], [1, 1, 0]);
   const heroTextY = useTransform(p, [0, 0.4], [0, -30]);
 
-  // Facade: dark -> lit, then a gentle push toward the door. Holds lit until
-  // the pin releases directly into the interior below, no in-between step.
-  // Placeholder cut until this becomes a real POV video walkthrough (see plan).
-  const beforeOpacity = useTransform(p, [0, 0.32, 0.45], [1, 1, 0]);
-  const afterOpacity = useTransform(p, [0.28, 0.45, 1], [0, 1, 1]);
-  const facadeScale = useTransform(p, [0, 1], [1, 1.4]);
+  // Facade: dark -> lit, gentle push, then holds until the pin releases
+  // directly into the hotspot interior below. No intermediate static
+  // interior reveal, so there's exactly one handoff, not two.
+  const beforeOpacity = useTransform(p, [0, 0.28, 0.4], [1, 1, 0]);
+  const afterOpacity = useTransform(p, [0.24, 0.4, 1], [0, 1, 1]);
+  const afterScale = useTransform(p, [0.4, 1], [1, 1.25]);
 
-  const signageHotspotOpacity = useTransform(p, [0.45, 0.55], [0, 1]);
-  const signageHotspotPointerEvents = useTransform(p, (v) => (v > 0.45 ? "auto" : "none"));
+  const signageHotspotOpacity = useTransform(p, [0.24, 0.32, 0.4, 0.48], [0, 1, 1, 0]);
+  const signageHotspotPointerEvents = useTransform(p, (v) => (v > 0.26 && v < 0.46 ? "auto" : "none"));
 
   if (prefersReducedMotion) {
     return <StaticHero />;
@@ -286,13 +284,13 @@ export default function Act0Hero() {
 
           <motion.img
             className="hero-build__img"
-            style={{ opacity: beforeOpacity, scale: facadeScale, transformOrigin: DOOR_ORIGIN }}
+            style={{ opacity: beforeOpacity }}
             src={asset("assets/act0/facade-before.jpg")}
             alt="A Dutch canal house at dusk with a stepped gable and brick facade. A bold sign board reading DreamWorks hangs above the shopfront, powered off, its letters dark and unlit. Every window in the building is dark, lit only by the blue evening sky and distant streetlamps."
           />
           <motion.img
             className="hero-build__img"
-            style={{ opacity: afterOpacity, scale: facadeScale, transformOrigin: DOOR_ORIGIN }}
+            style={{ opacity: afterOpacity, scale: afterScale }}
             src={asset("assets/act0/facade-after.jpg")}
             alt="The same canal house now fully lit: the DreamWorks sign glows bold above the shopfront and every window in the building is lit warm from inside, light spilling onto the wet brick and pavement below. The front door stands ready to enter."
           />
