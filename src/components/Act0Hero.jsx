@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion } from "framer-motion";
 import { asset } from "../lib/asset.js";
 
 const easeOut = [0.23, 1, 0.32, 1];
+const LIGHTING_VIDEO_END = 0.75;
 
 const textContainer = {
   hidden: {},
@@ -93,6 +94,44 @@ const signageSpot = {
   sub: "Everything it takes to be seen:",
   services: signageServices,
 };
+
+function LightingVideo({ progress }) {
+  const videoRef = useRef(null);
+  const [duration, setDuration] = useState(0);
+
+  useMotionValueEvent(progress, "change", (latest) => {
+    const video = videoRef.current;
+    if (!video || !duration) return;
+    const t = Math.min(1, Math.max(0, latest / LIGHTING_VIDEO_END));
+    video.currentTime = t * duration;
+  });
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    // Nudge the browser to decode and paint the first frame right away,
+    // instead of leaving the element blank/black until a seek lands.
+    const playPromise = video.play();
+    if (playPromise) {
+      playPromise
+        .then(() => video.pause())
+        .catch(() => {});
+    }
+  }, []);
+
+  return (
+    <video
+      ref={videoRef}
+      className="hero-build__img"
+      src={asset("assets/act0/facade-lighting.mp4")}
+      poster={asset("assets/act0/facade-before.jpg")}
+      muted
+      playsInline
+      preload="auto"
+      onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+    />
+  );
+}
 
 function DetailOverlay({ item, motionEnabled, onClose }) {
   return (
@@ -327,18 +366,15 @@ export default function Act0Hero() {
 
   const cueOpacity = useTransform(scrollYProgress, [0, 0.03], [1, 0]);
 
-  const heroTextOpacity = useTransform(p, [0, 0.25, 0.4], [1, 1, 0]);
-  const heroTextY = useTransform(p, [0, 0.4], [0, -30]);
+  const heroTextOpacity = useTransform(p, [0, 0.15, 0.3], [1, 1, 0]);
+  const heroTextY = useTransform(p, [0, 0.3], [0, -30]);
 
-  // Facade: dark -> lit, gentle push, then holds until the pin releases
-  // directly into the hotspot interior below. No intermediate static
-  // interior reveal, so there's exactly one handoff, not two.
-  const beforeOpacity = useTransform(p, [0, 0.28, 0.4], [1, 1, 0]);
-  const afterOpacity = useTransform(p, [0.24, 0.4, 1], [0, 1, 1]);
-  const afterScale = useTransform(p, [0.4, 1], [1, 1.25]);
-
-  const signageHotspotOpacity = useTransform(p, [0.24, 0.32, 0.4, 0.48], [0, 1, 1, 0]);
-  const signageHotspotPointerEvents = useTransform(p, (v) => (v > 0.26 && v < 0.46 ? "auto" : "none"));
+  // Facade: a locked-off video scrubbed by scroll does the dark -> lit
+  // lighting change. The frame never moves; only the lighting animates.
+  // It holds on its final lit frame until the pin releases directly into
+  // the hotspot interior below, no intermediate static reveal.
+  const signageHotspotOpacity = useTransform(p, [0.62, 0.72, 1], [0, 1, 1]);
+  const signageHotspotPointerEvents = useTransform(p, (v) => (v > 0.64 ? "auto" : "none"));
 
   if (prefersReducedMotion) {
     return <StaticHero />;
@@ -350,18 +386,7 @@ export default function Act0Hero() {
         <div className="hero-build__pin">
           <motion.div className="hero-build__bar" style={{ width: progressWidth }} />
 
-          <motion.img
-            className="hero-build__img"
-            style={{ opacity: beforeOpacity }}
-            src={asset("assets/act0/facade-before.jpg")}
-            alt="A Dutch canal house at dusk with a stepped gable and brick facade. A bold sign board reading DreamWorks hangs above the shopfront, powered off, its letters dark and unlit. Every window in the building is dark, lit only by the blue evening sky and distant streetlamps."
-          />
-          <motion.img
-            className="hero-build__img"
-            style={{ opacity: afterOpacity, scale: afterScale }}
-            src={asset("assets/act0/facade-after.jpg")}
-            alt="The same canal house now fully lit: the DreamWorks sign glows bold above the shopfront and every window in the building is lit warm from inside, light spilling onto the wet brick and pavement below. The front door stands ready to enter."
-          />
+          <LightingVideo progress={scrollYProgress} />
           <div className="hero-build__scrim" />
 
           <motion.div
