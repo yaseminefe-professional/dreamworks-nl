@@ -3,6 +3,7 @@ import Nav from "./components/Nav.jsx";
 import Act0Hero from "./components/Act0Hero.jsx";
 import { InteriorExperience } from "./components/Act0Hero.jsx";
 import TradeSection from "./components/TradeSection.jsx";
+import WhoWeAre from "./components/WhoWeAre.jsx";
 
 const tradeSections = [
   {
@@ -45,19 +46,10 @@ const tradeSections = [
     id: "demolition",
     eyebrow: "DreamWorks · Demolition",
     title: "Clear the way, safely.",
-    body: "Full demolition and strip-out work, handled safely and cleared fast, so the next phase can start on schedule.",
-    image: "assets/trades/demolition.jpg",
-    alt: "An excavator with a hydraulic breaker demolishing a concrete wall on a construction site.",
-    services: ["Full demolition", "Bathroom strip-outs", "Kitchen strip-outs", "General strip-out work", "Construction waste removal"],
-  },
-  {
-    id: "drilling",
-    eyebrow: "DreamWorks · Concrete Drilling",
-    title: "Precision holes, wherever you need them.",
-    body: "Core drilling and concrete cutting for walls, floors, and slabs, done cleanly with minimal disruption.",
+    body: "Full demolition, strip-outs, and precision concrete cutting and drilling, handled safely and cleared fast, so the next phase can start on schedule.",
     image: "assets/trades/drilling.jpg",
     alt: "A diamond core drill boring a precise hole through a concrete wall, water cooling the bit.",
-    services: ["Concrete core drilling", "Concrete cutting", "Wall and floor penetrations", "Dust and debris control"],
+    services: ["Full demolition", "Bathroom strip-outs", "Kitchen strip-outs", "General strip-out work", "Concrete cutting & drilling", "Construction waste removal"],
   },
 ];
 
@@ -69,6 +61,7 @@ export default function App() {
       <Nav />
       <main id="main">
         <Act0Hero />
+        <WhoWeAre />
         {tradeSections.map((section) => (
           <TradeSection key={section.id} {...section} />
         ))}

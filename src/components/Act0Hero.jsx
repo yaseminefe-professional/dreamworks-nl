@@ -32,17 +32,6 @@ const wallServices = [
   "Decorative wall finishes",
 ];
 
-const signageServices = [
-  "Facade advertising",
-  "Illuminated signage",
-  "LED lettering",
-  "Vehicle wraps & lettering",
-  "Window film",
-  "Signboards",
-  "Banners",
-  "Interior signage",
-];
-
 const spots = [
   {
     key: "floor",
@@ -81,19 +70,6 @@ const spots = [
     services: carpentryServices,
   },
 ];
-
-const signageSpot = {
-  key: "signage",
-  label: "Signage",
-  left: "42%",
-  top: "24%",
-  src: "assets/act0/facade-after.jpg",
-  backdrop: "assets/act0/facade-after.jpg",
-  alt: "The lit DreamWorks sign glowing above the shopfront entrance at night.",
-  head: "Advertising & signage.",
-  sub: "Everything it takes to be seen:",
-  services: signageServices,
-};
 
 function LightingVideo({ progress }) {
   const videoRef = useRef(null);
@@ -307,73 +283,21 @@ export function InteriorExperience({ motionEnabled }) {
   );
 }
 
-function SignageHotspot({ opacityStyle, pointerEventsStyle, motionEnabled }) {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    function onKey(e) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  return (
-    <>
-      <motion.div className="interior__hotspots" style={{ opacity: opacityStyle, pointerEvents: pointerEventsStyle }}>
-        <button
-          type="button"
-          className="interior__hotspot"
-          style={{ left: signageSpot.left, top: signageSpot.top }}
-          onClick={() => setOpen(true)}
-          aria-label={`See ${signageSpot.label} in detail`}
-        >
-          <span className="interior__hotspot-dot" />
-          <span className="interior__hotspot-label">{signageSpot.label}</span>
-        </button>
-      </motion.div>
-
-      <AnimatePresence>
-        {open && <DetailOverlay item={signageSpot} motionEnabled={motionEnabled} onClose={() => setOpen(false)} />}
-      </AnimatePresence>
-    </>
-  );
-}
-
 function StaticHero() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <>
-      <header className="hero hero--static" id="home">
-        <img className="hero__bg" src={asset("assets/act0/facade-after.jpg")} alt="A Dutch canal house at night with a bold illuminated sign reading DreamWorks glowing above the shopfront, warm light spilling from every window onto the wet street below." />
-        <div className="hero__scrim" />
-        <div className="hero__content">
-          <p className="hero__eyebrow">DreamWorks &middot; Advertising &amp; Signage</p>
-          <h1 className="hero__title">
-            No signage? No visibility?
-            <br />
-            No problem.
-          </h1>
-          <p className="hero__subhead">A business that can&rsquo;t be seen doesn&rsquo;t exist yet. We make sure yours does.</p>
-        </div>
-        <div className="interior__hotspots">
-          <button
-            type="button"
-            className="interior__hotspot"
-            style={{ left: signageSpot.left, top: signageSpot.top }}
-            onClick={() => setOpen(true)}
-            aria-label={`See ${signageSpot.label} in detail`}
-          >
-            <span className="interior__hotspot-dot" />
-            <span className="interior__hotspot-label">{signageSpot.label}</span>
-          </button>
-        </div>
-        <AnimatePresence>
-          {open && <DetailOverlay item={signageSpot} motionEnabled={false} onClose={() => setOpen(false)} />}
-        </AnimatePresence>
-      </header>
-    </>
+    <header className="hero hero--static" id="home">
+      <img className="hero__bg" src={asset("assets/act0/facade-after.jpg")} alt="A Dutch canal house at night with a bold illuminated sign reading DreamWorks glowing above the shopfront, warm light spilling from every window onto the wet street below." />
+      <div className="hero__scrim" />
+      <div className="hero__content">
+        <p className="hero__eyebrow">DreamWorks</p>
+        <h1 className="hero__title">
+          One team.
+          <br />
+          Every trade, under one roof.
+        </h1>
+        <p className="hero__subhead">From the sign above the door to everything behind it, one point of contact makes it happen.</p>
+      </div>
+    </header>
   );
 }
 
@@ -398,8 +322,6 @@ export default function Act0Hero() {
   // lighting change. The frame never moves; only the lighting animates.
   // It holds on its final lit frame until the pin releases directly into
   // the hotspot interior below, no intermediate static reveal.
-  const signageHotspotOpacity = useTransform(p, [0.62, 0.72, 1], [0, 1, 1]);
-  const signageHotspotPointerEvents = useTransform(p, (v) => (v > 0.64 ? "auto" : "none"));
 
   if (prefersReducedMotion) {
     return <StaticHero />;
@@ -422,19 +344,17 @@ export default function Act0Hero() {
             animate="show"
           >
             <motion.p className="hero__eyebrow" variants={textItem}>
-              DreamWorks &middot; Advertising &amp; Signage
+              DreamWorks
             </motion.p>
             <motion.h1 className="hero__title" variants={textItem}>
-              No signage? No visibility?
+              One team.
               <br />
-              No problem.
+              Every trade, under one roof.
             </motion.h1>
             <motion.p className="hero__subhead" variants={textItem}>
-              A business that can&rsquo;t be seen doesn&rsquo;t exist yet. We make sure yours does.
+              From the sign above the door to everything behind it, one point of contact makes it happen.
             </motion.p>
           </motion.div>
-
-          <SignageHotspot opacityStyle={signageHotspotOpacity} pointerEventsStyle={signageHotspotPointerEvents} motionEnabled={!prefersReducedMotion} />
 
           <motion.div className="hero-build__cue" style={{ opacity: cueOpacity }}>
             <span className="hero-build__mouse" />

@@ -33,11 +33,11 @@ export default function Nav() {
   }
 
   const links = [
+    { id: "who-we-are", label: "Who we are" },
     { id: "signage-work", label: "Signage" },
     { id: "construction", label: "Construction" },
     { id: "painting", label: "Wall finishing" },
     { id: "demolition", label: "Demolition" },
-    { id: "drilling", label: "Concrete drilling" },
     { id: "craftsmanship", label: "Craftsmanship" },
   ];
 
