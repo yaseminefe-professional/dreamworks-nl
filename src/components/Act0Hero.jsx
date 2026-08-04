@@ -98,17 +98,42 @@ const signageSpot = {
 function LightingVideo({ progress }) {
   const videoRef = useRef(null);
   const [duration, setDuration] = useState(0);
+  const seekingRef = useRef(false);
+  const pendingRef = useRef(null);
+
+  function applyTime(t) {
+    const video = videoRef.current;
+    if (!video) return;
+    if (seekingRef.current) {
+      pendingRef.current = t;
+      return;
+    }
+    if (Math.abs(video.currentTime - t) < 0.03) return;
+    seekingRef.current = true;
+    video.currentTime = t;
+  }
 
   useMotionValueEvent(progress, "change", (latest) => {
-    const video = videoRef.current;
-    if (!video || !duration) return;
+    if (!duration) return;
     const t = Math.min(1, Math.max(0, latest / LIGHTING_VIDEO_END));
-    video.currentTime = t * duration;
+    applyTime(t * duration);
   });
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    // Only issue the next seek once the current one lands, applying only
+    // the latest requested position, so rapid scroll events don't queue up
+    // a backlog of seeks and make playback feel like it's stuttering.
+    function onSeeked() {
+      seekingRef.current = false;
+      if (pendingRef.current !== null) {
+        const t = pendingRef.current;
+        pendingRef.current = null;
+        applyTime(t);
+      }
+    }
+    video.addEventListener("seeked", onSeeked);
     // Nudge the browser to decode and paint the first frame right away,
     // instead of leaving the element blank/black until a seek lands.
     const playPromise = video.play();
@@ -117,6 +142,7 @@ function LightingVideo({ progress }) {
         .then(() => video.pause())
         .catch(() => {});
     }
+    return () => video.removeEventListener("seeked", onSeeked);
   }, []);
 
   return (
@@ -177,7 +203,7 @@ const AUTO_TOUR_ORDER = ["floor", "cabinetry", "wall"];
 const AUTO_TOUR_STEP_MS = 2600;
 const AUTO_TOUR_DWELL_MS = 700;
 
-function InteriorExperience({ motionEnabled }) {
+export function InteriorExperience({ motionEnabled }) {
   const [active, setActive] = useState(null);
   const activeSpot = spots.find((s) => s.key === active) || null;
 
@@ -252,7 +278,7 @@ function InteriorExperience({ motionEnabled }) {
   }, [motionEnabled]);
 
   return (
-    <section className="interior" aria-label="Inside DreamWorks: click a spot to see the craftsmanship">
+    <section className="interior" id="craftsmanship" aria-label="Inside DreamWorks: click a spot to see the craftsmanship">
       <img className="interior__img" src={asset("assets/act0/storefront-drone.jpg")} alt="An elevated, drone-like view of the DreamWorks interior just through the front door: exposed beams, shelving, a bare wall, and the stone floor, all visible in one sweep." />
       <div className="interior__scrim" />
 
@@ -347,7 +373,6 @@ function StaticHero() {
           {open && <DetailOverlay item={signageSpot} motionEnabled={false} onClose={() => setOpen(false)} />}
         </AnimatePresence>
       </header>
-      <InteriorExperience motionEnabled={false} />
     </>
   );
 }
@@ -417,8 +442,6 @@ export default function Act0Hero() {
           </motion.div>
         </div>
       </header>
-
-      <InteriorExperience motionEnabled={!prefersReducedMotion} />
     </>
   );
 }
