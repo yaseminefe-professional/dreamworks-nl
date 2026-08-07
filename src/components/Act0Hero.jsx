@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { asset } from "../lib/asset.js";
+import { useScrubbedVideo } from "../lib/useScrubbedVideo.js";
 
 const easeOut = [0.23, 1, 0.32, 1];
 const LIGHTING_VIDEO_END = 0.75;
@@ -72,54 +73,7 @@ const spots = [
 ];
 
 function LightingVideo({ progress }) {
-  const videoRef = useRef(null);
-  const [duration, setDuration] = useState(0);
-  const seekingRef = useRef(false);
-  const pendingRef = useRef(null);
-
-  function applyTime(t) {
-    const video = videoRef.current;
-    if (!video) return;
-    if (seekingRef.current) {
-      pendingRef.current = t;
-      return;
-    }
-    if (Math.abs(video.currentTime - t) < 0.03) return;
-    seekingRef.current = true;
-    video.currentTime = t;
-  }
-
-  useMotionValueEvent(progress, "change", (latest) => {
-    if (!duration) return;
-    const t = Math.min(1, Math.max(0, latest / LIGHTING_VIDEO_END));
-    applyTime(t * duration);
-  });
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    // Only issue the next seek once the current one lands, applying only
-    // the latest requested position, so rapid scroll events don't queue up
-    // a backlog of seeks and make playback feel like it's stuttering.
-    function onSeeked() {
-      seekingRef.current = false;
-      if (pendingRef.current !== null) {
-        const t = pendingRef.current;
-        pendingRef.current = null;
-        applyTime(t);
-      }
-    }
-    video.addEventListener("seeked", onSeeked);
-    // Nudge the browser to decode and paint the first frame right away,
-    // instead of leaving the element blank/black until a seek lands.
-    const playPromise = video.play();
-    if (playPromise) {
-      playPromise
-        .then(() => video.pause())
-        .catch(() => {});
-    }
-    return () => video.removeEventListener("seeked", onSeeked);
-  }, []);
+  const { videoRef, onLoadedMetadata } = useScrubbedVideo(progress, { start: 0, end: LIGHTING_VIDEO_END });
 
   return (
     <video
@@ -130,7 +84,7 @@ function LightingVideo({ progress }) {
       muted
       playsInline
       preload="auto"
-      onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+      onLoadedMetadata={onLoadedMetadata}
     />
   );
 }
@@ -288,13 +242,13 @@ function StaticHero() {
     <header className="hero hero--static" id="home">
       <img className="hero__bg" src={asset("assets/act0/facade-after.jpg")} alt="A Dutch canal house at night with a bold illuminated sign reading DreamWorks glowing above the shopfront, warm light spilling from every window onto the wet street below." />
       <div className="hero__scrim" />
+      <p className="hero__caption">
+        One team, every trade,
+        <br />
+        under one roof.
+      </p>
       <div className="hero__content">
-        <p className="hero__eyebrow">DreamWorks</p>
-        <h1 className="hero__title">
-          One team.
-          <br />
-          Every trade, under one roof.
-        </h1>
+        <h1 className="hero-build__wordmark">DreamWorks</h1>
         <p className="hero__subhead">From the sign above the door to everything behind it, one point of contact makes it happen.</p>
       </div>
     </header>
@@ -337,19 +291,28 @@ export default function Act0Hero() {
           <div className="hero-build__scrim" />
 
           <motion.div
+            className="hero-build__caption"
+            style={{ opacity: heroTextOpacity }}
+            variants={textContainer}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.p variants={textItem}>
+              One team, every trade,
+              <br />
+              under one roof.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
             className="hero-build__final"
             style={{ opacity: heroTextOpacity, y: heroTextY }}
             variants={textContainer}
             initial="hidden"
             animate="show"
           >
-            <motion.p className="hero__eyebrow" variants={textItem}>
+            <motion.h1 className="hero-build__wordmark" variants={textItem}>
               DreamWorks
-            </motion.p>
-            <motion.h1 className="hero__title" variants={textItem}>
-              One team.
-              <br />
-              Every trade, under one roof.
             </motion.h1>
             <motion.p className="hero__subhead" variants={textItem}>
               From the sign above the door to everything behind it, one point of contact makes it happen.

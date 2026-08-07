@@ -3,6 +3,7 @@
 :root {
   --font-display: "Big Shoulders Display", sans-serif;
   --font-body: "IBM Plex Sans", sans-serif;
+  --font-serif: "Playfair Display", serif;
 
   --paper: #f1efe7;
   --ink: #1c1f22;
@@ -12,6 +13,7 @@
   --brand-ink: #1c1f22;
 
   --gap: clamp(1.5rem, 3vw, 3rem);
+  --grid-cols: 6;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -46,6 +48,29 @@ img {
   display: block;
 }
 
+/* ---------- Site-wide vertical grid guides ---------- */
+
+.grid-guides {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.grid-guides__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(241, 239, 234, 0.08);
+}
+
+@media (max-width: 800px) {
+  .grid-guides {
+    display: none;
+  }
+}
+
 :focus-visible {
   outline: 3px solid var(--brand);
   outline-offset: 3px;
@@ -59,6 +84,7 @@ img {
   z-index: 100;
   display: flex;
   align-items: center;
+  gap: 1rem;
   padding: 1rem var(--gap);
   background: transparent;
   box-shadow: none;
@@ -271,6 +297,33 @@ img {
   opacity: 0.92;
 }
 
+.hero-build__caption,
+.hero__caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  margin: 0;
+  padding: clamp(6rem, 14vw, 9rem) var(--gap) 0;
+  max-width: 26ch;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.4;
+}
+
+.hero-build__wordmark {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(3.4rem, 11vw, 8.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.25rem;
+  text-shadow: 0 2px 30px rgba(10, 11, 12, 0.55);
+}
+
 @media (max-width: 640px) {
   .hero-build {
     height: 340vh;
@@ -464,112 +517,511 @@ img {
 
 .trade {
   position: relative;
+  overflow: hidden;
+  scroll-margin-top: 5rem;
+}
+
+/* Shared: letterbox, diptych, plate, closing all sit on the one daylight
+   palette, only Demolition (contrast) breaks to dark. Color comes from the
+   photography, not from a different background per trade. */
+.trade--letterbox,
+.trade--diptych,
+.trade--plate,
+.trade--closing {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  background: var(--paper);
+  color: var(--ink);
+  padding: clamp(5rem, 10vw, 7rem) var(--gap);
+}
+
+.trade__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.trade__title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.05;
+  margin: 0 0 0.5rem;
+  will-change: clip-path;
+}
+
+.trade__body {
+  max-width: 56ch;
+  margin: 0 auto 0.5rem;
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+.trade__coords {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}
+
+.trade__services-inline {
+  font-size: 0.95rem;
+  opacity: 0.7;
+  text-align: center;
+  max-width: 60ch;
+  margin: 0.5rem auto 0;
+}
+
+.trade__body-wrap {
+  width: min(680px, 90vw);
+  text-align: center;
+}
+
+/* Letterbox (Garden) & Closing (Signage) */
+
+.trade-letterbox__heading {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 800px;
+}
+
+.trade--letterbox .trade__title,
+.trade--closing .trade__title {
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+}
+
+.trade-letterbox__media {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: 21 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: -1.25rem;
+}
+
+.trade--closing {
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 70%, #1c1f22 100%);
+}
+
+.trade--closing .trade-letterbox__media {
+  box-shadow: 0 30px 80px rgba(10, 11, 12, 0.35);
+}
+
+/* Diptych (Carpentry) */
+
+.trade-diptych {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.trade-diptych__media {
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.trade-diptych__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.trade--diptych .trade__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.trade--diptych .trade__body {
+  margin: 0 0 0.5rem;
+  text-align: left;
+}
+
+.trade--diptych .service-list {
+  grid-template-columns: 1fr;
+  max-width: 320px;
+  margin-top: 1rem;
+}
+
+.trade--diptych .service-list li {
+  color: var(--ink);
+  opacity: 0.85;
+  text-shadow: none;
+  font-size: 1rem;
+}
+
+/* Plate (Property Development) */
+
+.trade-plate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 700px;
+  width: 100%;
+}
+
+.trade-plate__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  padding: 10px;
+  border: 1px solid rgba(28, 31, 34, 0.25);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.trade-plate__grid {
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(28, 31, 34, 0.15) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(90deg, rgba(28, 31, 34, 0.15) 0 1px, transparent 1px 48px);
+}
+
+.trade-plate__annotation {
+  align-self: flex-start;
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.trade--plate .trade__title {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+}
+
+.trade--plate .service-list li {
+  color: var(--ink);
+  opacity: 0.85;
+  text-shadow: none;
+}
+
+/* Contrast (Demolition), the one deliberate dark break */
+
+.trade--contrast {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   align-items: flex-end;
-  overflow: hidden;
-  color: var(--paper);
   background: #0a0b0c;
-  scroll-margin-top: 5rem;
+  color: var(--paper);
 }
 
-.trade__img {
+.trade--contrast .trade__photo {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
-.trade__scrim {
+.trade--contrast .trade__title {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  text-shadow: 0 2px 20px rgba(10, 11, 12, 0.5);
+}
+
+.trade--contrast .trade__body {
+  margin: 0 0 0.5rem;
+  text-align: left;
+  opacity: 0.92;
+}
+
+.trade--contrast .trade__coords {
+  opacity: 0.75;
+}
+
+.trade-contrast__scrim {
   position: absolute;
   inset: 0;
   background: linear-gradient(0deg, rgba(10, 11, 12, 0.92) 0%, rgba(10, 11, 12, 0.45) 48%, rgba(10, 11, 12, 0.15) 75%, rgba(10, 11, 12, 0.3) 100%);
 }
 
-.trade__content {
+.trade-contrast__content {
   position: relative;
+  z-index: 1;
   padding: 0 var(--gap) clamp(3rem, 8vw, 6rem);
   max-width: 820px;
 }
 
-.trade__title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2.4rem, 6vw, 4.2rem);
-  line-height: 1.05;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 20px rgba(10, 11, 12, 0.5);
-}
+/* Connector: the short line between trades, same paper background, no pin,
+   no color change, just the next sentence on the same page. */
 
-.trade__body {
-  max-width: 52ch;
-  font-size: 1.1rem;
-  opacity: 0.92;
-  margin-bottom: 0.5rem;
-}
-
-/* ---------- Nav tabs ---------- */
-
-.nav__links {
-  display: flex;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 2rem);
-  margin-left: auto;
-}
-
-.nav__link {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--paper);
-  opacity: 0.85;
-  white-space: nowrap;
-}
-
-.nav__link:hover,
-.nav__link:focus-visible {
-  opacity: 1;
-}
-
-@media (max-width: 900px) {
-  .nav__links {
-    display: none;
-  }
-}
-
-/* ---------- Who we are ---------- */
-
-.who {
-  background: #14171b;
-  color: var(--paper);
-  padding: clamp(5rem, 14vw, 9rem) var(--gap);
-}
-
-.who__content {
-  max-width: 760px;
-  margin: 0 auto;
+.trade-connector {
+  background: var(--paper);
+  color: var(--ink);
+  padding: clamp(2.5rem, 6vw, 4rem) var(--gap);
   text-align: center;
 }
 
-.who__title {
+.trade-connector p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  opacity: 0.7;
+  max-width: 40ch;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .trade-diptych {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-diptych__copy {
+    text-align: center;
+    align-items: center;
+  }
+
+  .trade--diptych .trade__body {
+    text-align: center;
+  }
+
+  .trade--diptych .service-list {
+    margin: 1rem auto 0;
+  }
+}
+
+/* ---------- Nav: pill groups ---------- */
+
+.nav__group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.nav__group--left {
+  justify-content: flex-start;
+}
+
+.nav__group--right {
+  justify-content: flex-end;
+}
+
+.nav__pill {
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(243, 241, 234, 0.1);
+  backdrop-filter: blur(6px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--paper);
+  white-space: nowrap;
+  transition: background 200ms var(--ease-out);
+}
+
+.nav__pill:hover,
+.nav__pill:focus-visible {
+  background: rgba(243, 241, 234, 0.2);
+}
+
+.nav__pill--cta {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+
+.nav__pill--cta:hover,
+.nav__pill--cta:focus-visible {
+  background: #dd9530;
+}
+
+.nav__tab {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 90;
+  transform: translateY(-50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  padding: 1.5rem 0.6rem;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 10px 0 0 10px;
+}
+
+@media (max-width: 900px) {
+  .nav__group {
+    display: none;
+  }
+
+  .nav {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav__tab {
+    padding: 1rem 0.4rem;
+    font-size: 0.68rem;
+  }
+}
+
+/* ---------- Interludes: scroll-scrubbed break pages between worlds ---------- */
+
+.interlude {
+  position: relative;
+  background: #0a0b0c;
+  scroll-margin-top: 5rem;
+}
+
+.interlude--manifesto,
+.interlude--process {
+  height: 230vh;
+}
+
+.interlude--closing {
+  height: 190vh;
+}
+
+.interlude__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interlude__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.interlude__grain {
+  position: absolute;
+  inset: -20%;
+  z-index: 3;
+  pointer-events: none;
+  background-repeat: repeat;
+  animation: interlude-grain 9s steps(6) infinite;
+}
+
+.interlude--closing .interlude__grain {
+  animation-duration: 16s;
+}
+
+@keyframes interlude-grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -2%); }
+  80% { transform: translate(3%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+.interlude__content {
+  position: relative;
+  z-index: 4;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--gap);
+  text-align: center;
+  color: var(--paper);
+}
+
+/* Reduced-motion fallback: no pin, no scroll-linked morph, one settle-in */
+
+.interlude--static {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(5rem, 14vw, 9rem) var(--gap);
+}
+
+.interlude--static .interlude__grain {
+  inset: 0;
+  animation: none;
+}
+
+.interlude--static .interlude__content {
+  padding: 0;
+}
+
+.interlude--manifesto.interlude--static .interlude__content {
+  color: var(--ink);
+}
+
+.interlude__title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  line-height: 1.08;
-  margin-bottom: 1.25rem;
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  line-height: 1.06;
+  margin: 1rem 0 2rem;
 }
 
-.who__body {
-  font-size: 1.15rem;
-  opacity: 0.85;
-  max-width: 58ch;
-  margin: 0 auto 2rem;
+.interlude__kicker {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: var(--brand);
+  margin-bottom: 1rem;
 }
 
-.who__values {
+.interlude__title--serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6.4vw, 4.6rem);
+  line-height: 1.14;
+  max-width: 18ch;
+  margin: 1rem auto 2rem;
+}
+
+.interlude__word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.interlude__trades {
+  list-style: none;
+  margin: 0 0 2.5rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 1.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1rem, 2.2vw, 1.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.interlude__trades li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.interlude__trade-ring {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--paper);
+}
+
+.interlude__values {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -579,14 +1031,15 @@ img {
   gap: 0.75rem 2rem;
 }
 
-.who__values li {
+.interlude__values li {
   position: relative;
   padding-left: 1.1rem;
   font-size: 1rem;
   font-weight: 500;
+  opacity: 0.9;
 }
 
-.who__values li::before {
+.interlude__values li::before {
   content: "";
   position: absolute;
   left: 0;
@@ -594,4 +1047,282 @@ img {
   width: 8px;
   height: 2px;
   background: var(--brand);
+}
+
+.interlude__process {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: left;
+}
+
+.interlude__process li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.interlude__process-n {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  color: var(--brand);
+  line-height: 1;
+}
+
+.interlude__process-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+}
+
+.interlude__process-body {
+  font-size: 1rem;
+  opacity: 0.82;
+  max-width: 32ch;
+}
+
+.interlude__closing-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 5.5vw, 4rem);
+  line-height: 1.1;
+  max-width: 20ch;
+  margin: 0 auto 1rem;
+}
+
+.interlude__closing-sub {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  max-width: 40ch;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .interlude__process {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .interlude__process li {
+    align-items: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .interlude--manifesto,
+  .interlude--process {
+    height: 190vh;
+  }
+
+  .interlude--closing {
+    height: 160vh;
+  }
+}
+
+/* ---------- Contact: the single unified quote flow ---------- */
+
+.contact {
+  position: relative;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #1c120a 0%, #241609 100%);
+  color: var(--paper);
+  padding: clamp(4rem, 10vw, 7rem) var(--gap) clamp(3rem, 6vw, 4rem);
+}
+
+.contact__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.contact__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.08;
+  margin: 1rem 0 1.25rem;
+}
+
+.contact__body {
+  font-size: 1.05rem;
+  opacity: 0.85;
+  max-width: 46ch;
+  margin-bottom: 2rem;
+}
+
+.contact__columns {
+  display: flex;
+  gap: clamp(2.5rem, 6vw, 4rem);
+  flex-wrap: wrap;
+}
+
+.contact__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact__links-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin: 0 0 0.35rem;
+}
+
+.contact__links a {
+  color: var(--paper);
+  opacity: 0.85;
+  font-size: 0.95rem;
+}
+
+.contact__links a:hover,
+.contact__links a:focus-visible {
+  opacity: 1;
+}
+
+.contact__details {
+  display: flex;
+  gap: 2.5rem;
+  margin: 0;
+}
+
+.contact__details dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.35rem;
+}
+
+.contact__details dd {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.contact__details a {
+  color: var(--paper);
+}
+
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contact__field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.contact__field input,
+.contact__field select,
+.contact__field textarea {
+  font: inherit;
+  color: var(--paper);
+  background: rgba(243, 241, 234, 0.06);
+  border: 1px solid rgba(243, 241, 234, 0.25);
+  border-radius: 4px;
+  padding: 0.7rem 0.85rem;
+  resize: vertical;
+}
+
+.contact__field input:focus-visible,
+.contact__field select:focus-visible,
+.contact__field textarea:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.contact__submit {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.9rem 2rem;
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--brand-ink);
+  background: var(--brand);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 200ms var(--ease-out), background 200ms var(--ease-out);
+}
+
+.contact__submit:hover {
+  background: #dd9530;
+}
+
+.contact__submit:focus-visible {
+  outline: 3px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.contact__confirm {
+  align-self: start;
+  padding: 2rem;
+  border: 1px solid rgba(243, 241, 234, 0.25);
+  border-radius: 4px;
+}
+
+.contact__confirm-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.contact__foot {
+  max-width: 1180px;
+  margin: clamp(3rem, 6vw, 4rem) auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(243, 241, 234, 0.15);
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.contact__wordmark {
+  margin: clamp(2rem, 6vw, 4rem) 0 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(3rem, 13vw, 10rem);
+  line-height: 1;
+  color: rgba(243, 241, 234, 0.12);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .contact__wordmark {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 800px) {
+  .contact__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .contact__details {
+    gap: 1.5rem;
+  }
 }
