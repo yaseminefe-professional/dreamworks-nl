@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { asset } from "../lib/asset.js";
-import { useScrubbedVideo } from "../lib/useScrubbedVideo.js";
 
 const easeOut = [0.23, 1, 0.32, 1];
-const LIGHTING_VIDEO_END = 0.75;
+
+const HERO_POSTER = "assets/act0/renovation/living-kitchen.jpg";
+const HERO_POSTER_ALT = "A renovated open-plan kitchen and living room with a herringbone oak floor and tall windows.";
 
 const textContainer = {
   hidden: {},
@@ -72,19 +73,17 @@ const spots = [
   },
 ];
 
-function LightingVideo({ progress }) {
-  const { videoRef, onLoadedMetadata } = useScrubbedVideo(progress, { start: 0, end: LIGHTING_VIDEO_END });
-
+function RenovationTourVideo() {
   return (
     <video
-      ref={videoRef}
       className="hero-build__img"
-      src={asset("assets/act0/facade-lighting.mp4")}
-      poster={asset("assets/act0/facade-before.jpg")}
+      src={asset("assets/act0/renovation-tour.mp4")}
+      poster={asset(HERO_POSTER)}
+      autoPlay
+      loop
       muted
       playsInline
       preload="auto"
-      onLoadedMetadata={onLoadedMetadata}
     />
   );
 }
@@ -240,7 +239,7 @@ export function InteriorExperience({ motionEnabled }) {
 function StaticHero() {
   return (
     <header className="hero hero--static" id="home">
-      <img className="hero__bg" src={asset("assets/act0/facade-after.jpg")} alt="A Dutch canal house at night with a bold illuminated sign reading DreamWorks glowing above the shopfront, warm light spilling from every window onto the wet street below." />
+      <img className="hero__bg" src={asset(HERO_POSTER)} alt={HERO_POSTER_ALT} />
       <div className="hero__scrim" />
       <p className="hero__caption">
         One team, every trade,
@@ -272,10 +271,9 @@ export default function Act0Hero() {
   const heroTextOpacity = useTransform(p, [0, 0.15, 0.3], [1, 1, 0]);
   const heroTextY = useTransform(p, [0, 0.3], [0, -30]);
 
-  // Facade: a locked-off video scrubbed by scroll does the dark -> lit
-  // lighting change. The frame never moves; only the lighting animates.
-  // It holds on its final lit frame until the pin releases directly into
-  // the hotspot interior below, no intermediate static reveal.
+  // Background: a looping ambient tour video of real renovation work,
+  // not tied to scroll position, so it always reads like a clean, single
+  // shot rather than a stitched scroll-scrub.
 
   if (prefersReducedMotion) {
     return <StaticHero />;
@@ -287,8 +285,9 @@ export default function Act0Hero() {
         <div className="hero-build__pin">
           <motion.div className="hero-build__bar" style={{ width: progressWidth }} />
 
-          <LightingVideo progress={scrollYProgress} />
+          <RenovationTourVideo />
           <div className="hero-build__scrim" />
+          <div className="hero-build__watermark-mask" aria-hidden="true" />
 
           <motion.div
             className="hero-build__caption"

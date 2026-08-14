@@ -57,6 +57,11 @@ const tradeSections = [
     image: "assets/trades/signage.jpg",
     alt: "A craftsman assembling an illuminated LED channel letter in a signage workshop at night.",
     services: ["Facade advertising", "Illuminated signage", "LED lettering", "Vehicle wraps & lettering", "Window film", "Signboards", "Banners", "Interior signage"],
+    examples: [
+      { src: "assets/trades/signage-examples/dunkin.jpg", alt: "Backlit illuminated Dunkin' cup logo sign", label: "Dunkin'" },
+      { src: "assets/trades/signage-examples/jut-jul.jpg", alt: "Illuminated circular Jut & Jul facade sign at dusk", label: "Jut & Jul" },
+      { src: "assets/trades/signage-examples/smashed.jpg", alt: "Backlit Smashed logo lettering on an interior wall", label: "Smashed" },
+    ],
   },
 ];
 

@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { asset } from "../lib/asset.js";
 
 const easeOut = [0.23, 1, 0.32, 1];
 
@@ -147,16 +148,19 @@ function gradientPair(from, to) {
   ];
 }
 
-function Scene({ id, className, children, from, to, reducedFallback }) {
+function Scene({ id, className, children, from, to, reducedFallback, image }) {
   const prefersReducedMotion = useReducedMotion();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const [bgFrom, bgTo] = gradientPair(from, to);
   const background = useTransform(scrollYProgress, [0, 1], [bgFrom, bgTo]);
 
+  const photo = image && <img className="interlude__bg-photo" src={asset(image)} alt="" aria-hidden="true" />;
+
   if (prefersReducedMotion) {
     return (
       <section className={`interlude interlude--static ${className}`} id={id} style={{ background: bgTo }}>
+        {photo}
         <div className="interlude__grain" style={grainStyle(0.04)} aria-hidden="true" />
         <motion.div
           className="interlude__content"
@@ -174,6 +178,7 @@ function Scene({ id, className, children, from, to, reducedFallback }) {
   return (
     <section className={`interlude ${className}`} id={id} ref={ref}>
       <div className="interlude__pin">
+        {photo}
         <motion.div className="interlude__bg" style={{ background }} />
         <div className="interlude__grain" style={grainStyle()} aria-hidden="true" />
         <div className="interlude__content">{children(scrollYProgress)}</div>
@@ -242,8 +247,8 @@ export function Manifesto() {
 }
 
 export function ProcessInterlude() {
-  const from = PALETTE.neon;
-  const to = PALETTE.night;
+  const from = PALETTE.day;
+  const to = PALETTE.day;
 
   return (
     <Scene
@@ -253,7 +258,7 @@ export function ProcessInterlude() {
       to={to}
       reducedFallback={
         <>
-          <p className="hero__eyebrow">How we work</p>
+          <p className="interlude__kicker">How we work</p>
           <ol className="interlude__process">
             {PROCESS_STEPS.map((s) => (
               <li key={s.n}>
@@ -268,7 +273,7 @@ export function ProcessInterlude() {
     >
       {(progress) => (
         <>
-          <p className="hero__eyebrow">How we work</p>
+          <p className="interlude__kicker">How we work</p>
           <ol className="interlude__process">
             {PROCESS_STEPS.map((s, i) => (
               <ProcessStep key={s.n} step={s} progress={progress} start={0.06 + i * 0.17} />
@@ -292,6 +297,7 @@ export function Closing() {
       className="interlude--closing"
       from={from}
       to={to}
+      image="assets/act0/storefront-drone.jpg"
       reducedFallback={
         <>
           <h2 className="interlude__closing-title">{line}</h2>

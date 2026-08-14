@@ -12,13 +12,43 @@ const PROJECT_TYPES = [
   "Advertising & signage",
 ];
 
+const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+
 export default function Contact() {
   const prefersReducedMotion = useReducedMotion();
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setSent(true);
+
+    if (!WEB3FORMS_ACCESS_KEY) {
+      console.error(
+        "Missing VITE_WEB3FORMS_ACCESS_KEY. Add it to a .env file to enable the contact form.",
+      );
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    const formData = new FormData(e.target);
+    formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData,
+      });
+      const result = await res.json();
+      if (result.success) {
+        setStatus("sent");
+        e.target.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -42,14 +72,18 @@ export default function Contact() {
               <div>
                 <dt>Call</dt>
                 <dd>
-                  <a href="tel:+31000000000">+31 (0)00 000 0000</a>
+                  <a href="tel:+31620600693">+31 6 20600693</a>
                 </dd>
               </div>
               <div>
                 <dt>Email</dt>
                 <dd>
-                  <a href="mailto:info@dreamworks.nl">info@dreamworks.nl</a>
+                  <a href="mailto:oguzhanygurkan@gmail.com">oguzhanygurkan@gmail.com</a>
                 </dd>
+              </div>
+              <div>
+                <dt>Address</dt>
+                <dd>Niew zeelandweg 8-L, 1045 AL Amsterdam, The Netherlands</dd>
               </div>
             </dl>
             <div className="contact__links">
@@ -63,13 +97,15 @@ export default function Contact() {
           </div>
         </div>
 
-        {sent ? (
+        {status === "sent" ? (
           <div className="contact__confirm" role="status">
             <p className="contact__confirm-title">Enquiry sent.</p>
             <p>We will get back to you shortly with next steps.</p>
           </div>
         ) : (
           <form className="contact__form" onSubmit={handleSubmit}>
+            <input type="hidden" name="subject" value="New enquiry from the DreamWorks website" />
+            <input type="checkbox" name="botcheck" className="contact__honeypot" tabIndex={-1} autoComplete="off" />
             <div className="contact__field">
               <label htmlFor="contact-name">Name</label>
               <input id="contact-name" name="name" type="text" autoComplete="name" required />
@@ -92,14 +128,17 @@ export default function Contact() {
               <label htmlFor="contact-message">Tell us about the project</label>
               <textarea id="contact-message" name="message" rows={4} required />
             </div>
-            <button type="submit" className="contact__submit">
-              Send enquiry
+            {status === "error" && (
+              <p className="contact__error" role="alert">
+                Something went wrong sending your enquiry. Please try again, or email us directly.
+              </p>
+            )}
+            <button type="submit" className="contact__submit" disabled={status === "sending"}>
+              {status === "sending" ? "Sending…" : "Send enquiry"}
             </button>
           </form>
         )}
       </motion.div>
-
-      <p className="contact__foot">DreamWorks. Construction, garden, property development, advertising.</p>
 
       <h2 className="contact__wordmark" aria-hidden="true">
         DreamWorks
