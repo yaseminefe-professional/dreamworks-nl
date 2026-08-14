@@ -1,4 +1,5 @@
 import { useReducedMotion } from "framer-motion";
+import Preloader from "./components/Preloader.jsx";
 import Nav from "./components/Nav.jsx";
 import GridGuides from "./components/GridGuides.jsx";
 import Act0Hero from "./components/Act0Hero.jsx";
@@ -70,6 +71,7 @@ export default function App() {
 
   return (
     <>
+      <Preloader />
       <Nav />
       <GridGuides />
       <main id="main">

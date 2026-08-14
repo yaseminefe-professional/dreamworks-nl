@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { asset } from "../lib/asset.js";
+import { LogoMark } from "./Logo.jsx";
 
 export default function Nav() {
   const [solid, setSolid] = useState(false);
@@ -56,8 +56,8 @@ export default function Nav() {
           ))}
         </div>
 
-        <a className="nav__brand" href="#home">
-          <img src={asset("assets/images/logo-dreamworks.png")} alt="DreamWorks" className="nav__logo" />
+        <a className="nav__brand" href="#home" aria-label="DreamWorks, back to top">
+          <LogoMark className="nav__logo" />
         </a>
 
         <div className="nav__group nav__group--right">

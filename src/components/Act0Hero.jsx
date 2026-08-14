@@ -4,8 +4,45 @@ import { asset } from "../lib/asset.js";
 
 const easeOut = [0.23, 1, 0.32, 1];
 
-const HERO_POSTER = "assets/act0/renovation/living-kitchen.jpg";
-const HERO_POSTER_ALT = "A renovated open-plan kitchen and living room with a herringbone oak floor and tall windows.";
+const HERO_POSTER = "assets/act0/exterior-dutch-house.jpg";
+const HERO_POSTER_ALT = "A classical Dutch canal house facade with reddish brick and a white stepped gable, lit by warm late-afternoon sun.";
+
+const HERO_FRAMES = [
+  {
+    key: "exterior",
+    src: HERO_POSTER,
+    alt: HERO_POSTER_ALT,
+  },
+  {
+    key: "kitchen-living",
+    src: "assets/act0/interior-kitchen-living.jpg",
+    alt: "An open-plan living and kitchen space inside a renovated Dutch canal house, with herringbone oak flooring, exposed brick, and warm evening light through tall sash windows.",
+  },
+  {
+    key: "kitchen-island",
+    src: "assets/act0/interior-kitchen-island.jpg",
+    alt: "A marble kitchen island with an integrated induction hob and a cluster of amber blown-glass pendant lights above it.",
+  },
+  {
+    key: "living-room",
+    src: "assets/act0/interior-living-room.jpg",
+    alt: "A cozy living room with a velvet sectional sofa, a travertine coffee table, and warm ambient lighting.",
+  },
+  {
+    key: "bathroom",
+    src: "assets/act0/interior-bathroom.jpg",
+    alt: "A marble bathroom with a backlit oval mirror above a floating stone sink and a frameless glass walk-in shower.",
+  },
+];
+
+// [inStart, inEnd, outStart, outEnd] scroll-progress breakpoints per frame.
+const FRAME_WINDOWS = [
+  [0, 0, 0.28, 0.32],
+  [0.28, 0.32, 0.42, 0.46],
+  [0.42, 0.46, 0.56, 0.6],
+  [0.56, 0.6, 0.72, 0.76],
+  [0.72, 0.76, 1, 1],
+];
 
 const textContainer = {
   hidden: {},
@@ -73,18 +110,35 @@ const spots = [
   },
 ];
 
-function RenovationTourVideo() {
+function HeroFrame({ frame, breakpoints, index, p }) {
+  const [inStart, inEnd, outStart, outEnd] = breakpoints;
+  const isFirst = index === 0;
+  const isLast = index === FRAME_WINDOWS.length - 1;
+
+  const opacity = useTransform(
+    p,
+    isFirst ? [inEnd, outStart, outEnd] : isLast ? [inStart, inEnd, outEnd] : [inStart, inEnd, outStart, outEnd],
+    isFirst ? [1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0]
+  );
+  const scale = useTransform(p, [inStart, outEnd], [1, 1.06]);
+
   return (
-    <video
+    <motion.img
       className="hero-build__img"
-      src={asset("assets/act0/renovation-tour.mp4")}
-      poster={asset(HERO_POSTER)}
-      autoPlay
-      loop
-      muted
-      playsInline
-      preload="auto"
+      src={asset(frame.src)}
+      alt={frame.alt}
+      style={{ opacity, scale }}
     />
+  );
+}
+
+function HeroSequence({ p }) {
+  return (
+    <>
+      {HERO_FRAMES.map((frame, i) => (
+        <HeroFrame key={frame.key} frame={frame} breakpoints={FRAME_WINDOWS[i]} index={i} p={p} />
+      ))}
+    </>
   );
 }
 
@@ -271,10 +325,6 @@ export default function Act0Hero() {
   const heroTextOpacity = useTransform(p, [0, 0.15, 0.3], [1, 1, 0]);
   const heroTextY = useTransform(p, [0, 0.3], [0, -30]);
 
-  // Background: a looping ambient tour video of real renovation work,
-  // not tied to scroll position, so it always reads like a clean, single
-  // shot rather than a stitched scroll-scrub.
-
   if (prefersReducedMotion) {
     return <StaticHero />;
   }
@@ -285,9 +335,8 @@ export default function Act0Hero() {
         <div className="hero-build__pin">
           <motion.div className="hero-build__bar" style={{ width: progressWidth }} />
 
-          <RenovationTourVideo />
+          <HeroSequence p={p} />
           <div className="hero-build__scrim" />
-          <div className="hero-build__watermark-mask" aria-hidden="true" />
 
           <motion.div
             className="hero-build__caption"

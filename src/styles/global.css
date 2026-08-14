@@ -4,6 +4,7 @@
   --font-display: "Big Shoulders Display", sans-serif;
   --font-body: "IBM Plex Sans", sans-serif;
   --font-serif: "Playfair Display", serif;
+  --font-script: "Allura", cursive;
 
   --paper: #f1efe7;
   --ink: #1c1f22;
@@ -76,6 +77,45 @@ img {
   outline-offset: 3px;
 }
 
+/* ---------- Preloader ---------- */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: #0a0b0c;
+}
+
+.preloader__svg {
+  width: clamp(64px, 9vw, 96px);
+  height: auto;
+}
+
+.preloader__word {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  color: var(--paper);
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.preloader__tagline {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  color: var(--brand);
+  opacity: 0.9;
+  letter-spacing: 0.01em;
+  margin: -0.3rem 0 0;
+  white-space: nowrap;
+}
+
 /* ---------- Nav ---------- */
 
 .nav {
@@ -103,9 +143,9 @@ img {
 }
 
 .nav__logo {
-  height: 34px;
+  height: 30px;
   width: auto;
-  filter: brightness(0) invert(1);
+  color: var(--paper);
 }
 
 /* ---------- Static hero (reduced-motion fallback) ---------- */
@@ -182,17 +222,6 @@ img {
   background:
     radial-gradient(130% 85% at 50% 0%, rgba(10, 11, 12, 0.28), transparent 45%),
     linear-gradient(0deg, rgba(10, 11, 12, 0.85) 0%, rgba(10, 11, 12, 0.15) 38%, transparent 58%);
-}
-
-.hero-build__watermark-mask {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 3;
-  width: clamp(140px, 16vw, 260px);
-  height: clamp(90px, 11vw, 160px);
-  background: radial-gradient(ellipse at 0% 0%, rgba(8, 9, 10, 0.95) 0%, rgba(8, 9, 10, 0.7) 45%, transparent 78%);
-  pointer-events: none;
 }
 
 .service-list {
