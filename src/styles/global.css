@@ -1410,6 +1410,11 @@ img {
   display: flex;
   gap: 2.5rem;
   margin: 0;
+  min-width: 0;
+}
+
+.contact__details > div {
+  min-width: 0;
 }
 
 .contact__details dt {
@@ -1559,6 +1564,7 @@ img {
   }
 
   .contact__details {
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 1.25rem;
   }
 }
