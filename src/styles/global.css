@@ -1429,6 +1429,7 @@ img {
 .contact__details dd {
   margin: 0;
   font-size: 1.05rem;
+  overflow-wrap: anywhere;
 }
 
 .contact__details a {
