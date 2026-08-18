@@ -1,16 +1,9 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { asset } from "../lib/asset.js";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 const easeOut = [0.23, 1, 0.32, 1];
-
-const VALUES = [
-  "One point of contact",
-  "From design to delivery",
-  "Craftsmen under one roof",
-  "Quality & guarantee",
-  "Clear communication",
-];
 
 const PALETTE = {
   night: { deep: "#0a0b0c", mid: "#1c1f22" },
@@ -23,31 +16,7 @@ const PALETTE = {
   day: { deep: "#e9e4d6", mid: "#f6f3ea" },
 };
 
-const TRADES = [
-  { label: "Garden & Landscaping", key: "garden" },
-  { label: "Carpentry", key: "carpentry" },
-  { label: "Demolition", key: "concrete" },
-  { label: "Property Development", key: "blueprint" },
-  { label: "Advertising & Signage", key: "neon" },
-];
-
-const PROCESS_STEPS = [
-  {
-    n: "01",
-    title: "Design",
-    body: "We walk the site with you, work out what it needs, and put it on paper before anything is touched.",
-  },
-  {
-    n: "02",
-    title: "Build",
-    body: "Our own craftsmen carry it out, trade by trade, on the schedule we agreed at the start.",
-  },
-  {
-    n: "03",
-    title: "Deliver",
-    body: "One handover, one point of contact throughout, and a guarantee that stands behind the work.",
-  },
-];
+const TRADE_KEYS = ["garden", "carpentry", "concrete", "blueprint", "neon"];
 
 function Word({ children, progress, range }) {
   const opacity = useTransform(progress, range, [0, 1]);
@@ -188,6 +157,9 @@ function Scene({ id, className, children, from, to, reducedFallback, image }) {
 }
 
 export function Manifesto() {
+  const { t } = useLanguage();
+  const trades = TRADE_KEYS.map((key, i) => ({ key, label: t.manifesto.trades[i] }));
+  const values = t.manifesto.values;
   const from = PALETTE.night;
   const to = PALETTE.day;
 
@@ -199,15 +171,15 @@ export function Manifesto() {
       to={to}
       reducedFallback={
         <>
-          <p className="interlude__kicker">Who we are</p>
-          <h2 className="interlude__title interlude__title--serif">One outfit. Five trades. One point of contact.</h2>
+          <p className="interlude__kicker">{t.manifesto.kicker}</p>
+          <h2 className="interlude__title interlude__title--serif">{t.manifesto.title}</h2>
           <ul className="interlude__trades">
-            {TRADES.map((t) => (
-              <li key={t.label}>{t.label}</li>
+            {trades.map((trade) => (
+              <li key={trade.key}>{trade.label}</li>
             ))}
           </ul>
           <ul className="interlude__values">
-            {VALUES.map((v) => (
+            {values.map((v) => (
               <li key={v}>{v}</li>
             ))}
           </ul>
@@ -218,22 +190,22 @@ export function Manifesto() {
         const textColor = useTransform(progress, [0.72, 0.92], ["#f1efe7", "#1c1f22"]);
         return (
           <motion.div style={{ color: textColor }}>
-            <p className="interlude__kicker">Who we are</p>
+            <p className="interlude__kicker">{t.manifesto.kicker}</p>
             <KineticLine
               as="h2"
               className="interlude__title interlude__title--serif"
-              text="One outfit. Five trades. One point of contact."
+              text={t.manifesto.title}
               progress={progress}
               start={0.02}
               end={0.16}
             />
             <ul className="interlude__trades">
-              {TRADES.map((t, i) => (
-                <TradeItem key={t.label} trade={t} progress={progress} start={0.18 + i * 0.045} span={0.09} />
+              {trades.map((trade, i) => (
+                <TradeItem key={trade.key} trade={trade} progress={progress} start={0.18 + i * 0.045} span={0.09} />
               ))}
             </ul>
             <ul className="interlude__values">
-              {VALUES.map((v, i) => (
+              {values.map((v, i) => (
                 <RevealItem key={v} progress={progress} start={0.5 + i * 0.03} span={0.09}>
                   {v}
                 </RevealItem>
@@ -247,6 +219,8 @@ export function Manifesto() {
 }
 
 export function ProcessInterlude() {
+  const { t } = useLanguage();
+  const steps = t.process.steps;
   const from = PALETTE.day;
   const to = PALETTE.day;
 
@@ -258,9 +232,9 @@ export function ProcessInterlude() {
       to={to}
       reducedFallback={
         <>
-          <p className="interlude__kicker">How we work</p>
+          <p className="interlude__kicker">{t.process.kicker}</p>
           <ol className="interlude__process">
-            {PROCESS_STEPS.map((s) => (
+            {steps.map((s) => (
               <li key={s.n}>
                 <span className="interlude__process-n">{s.n}</span>
                 <span className="interlude__process-title">{s.title}</span>
@@ -273,9 +247,9 @@ export function ProcessInterlude() {
     >
       {(progress) => (
         <>
-          <p className="interlude__kicker">How we work</p>
+          <p className="interlude__kicker">{t.process.kicker}</p>
           <ol className="interlude__process">
-            {PROCESS_STEPS.map((s, i) => (
+            {steps.map((s, i) => (
               <ProcessStep key={s.n} step={s} progress={progress} start={0.06 + i * 0.17} />
             ))}
           </ol>
@@ -286,10 +260,11 @@ export function ProcessInterlude() {
 }
 
 export function Closing() {
+  const { t } = useLanguage();
+  const line = t.closing.title;
+  const subline = t.closing.sub;
   const from = PALETTE.night;
   const to = PALETTE.dusk;
-  const line = "One outfit. Five trades. One call to make it happen.";
-  const subline = "Tell us the job, we bring the right craftsmen.";
 
   return (
     <Scene

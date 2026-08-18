@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { LOGO_VIEWBOX, LOGO_ROOF_PATH } from "./Logo.jsx";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 const easeOut = [0.23, 1, 0.32, 1];
 const HOLD_MS = 2800;
 
 export default function Preloader() {
+  const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const [visible, setVisible] = useState(!prefersReducedMotion);
 
@@ -68,7 +70,7 @@ export default function Preloader() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: easeOut, delay: 1.8 }}
           >
-            Where your dreams come true.
+            {t.preloader.tagline}
           </motion.p>
         </motion.div>
       )}

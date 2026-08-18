@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogoMark } from "./Logo.jsx";
+import LanguageSwitcher from "./LanguageSwitcher.jsx";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 const easeOut = [0.23, 1, 0.32, 1];
 
 export default function Nav() {
+  const { t } = useLanguage();
   const [solid, setSolid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -51,18 +54,18 @@ export default function Nav() {
   }
 
   const leftLinks = [
-    { id: "who-we-are", label: "Who we are" },
-    { id: "garden", label: "Garden" },
-    { id: "carpentry", label: "Carpentry" },
-    { id: "demolition", label: "Demolition" },
+    { id: "who-we-are", label: t.nav.whoWeAre },
+    { id: "garden", label: t.nav.garden },
+    { id: "carpentry", label: t.nav.carpentry },
+    { id: "demolition", label: t.nav.demolition },
   ];
 
   const rightLinks = [
-    { id: "development", label: "Development" },
-    { id: "signage-work", label: "Signage" },
+    { id: "development", label: t.nav.development },
+    { id: "signage-work", label: t.nav.signage },
   ];
 
-  const allLinks = [...leftLinks, ...rightLinks, { id: "contact", label: "Contact" }];
+  const allLinks = [...leftLinks, ...rightLinks, { id: "contact", label: t.nav.contact }];
 
   return (
     <>
@@ -75,7 +78,7 @@ export default function Nav() {
           ))}
         </div>
 
-        <a className="nav__brand" href="#home" aria-label="DreamWorks, back to top">
+        <a className="nav__brand" href="#home" aria-label={t.nav.backToTop}>
           <LogoMark className="nav__logo" />
         </a>
 
@@ -86,8 +89,9 @@ export default function Nav() {
             </a>
           ))}
           <a className="nav__pill nav__pill--cta" href="#contact" onClick={(e) => jumpTo(e, "contact")}>
-            Contact
+            {t.nav.contact}
           </a>
+          <LanguageSwitcher />
         </div>
 
         <button
@@ -96,7 +100,7 @@ export default function Nav() {
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label={menuOpen ? t.nav.closeMenu : t.nav.openMenu}
         >
           <span />
           <span />
@@ -119,12 +123,13 @@ export default function Nav() {
                 {link.label}
               </a>
             ))}
+            <LanguageSwitcher />
           </motion.div>
         )}
       </AnimatePresence>
 
       <a className="nav__tab" href="#contact" onClick={(e) => jumpTo(e, "contact")}>
-        Get a quote
+        {t.nav.getQuote}
       </a>
     </>
   );

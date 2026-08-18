@@ -1,38 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { asset } from "../lib/asset.js";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 const easeOut = [0.23, 1, 0.32, 1];
 
 const HERO_POSTER = "assets/act0/exterior-dutch-house.jpg";
-const HERO_POSTER_ALT = "A classical Dutch canal house facade with reddish brick and a white stepped gable, lit by warm late-afternoon sun.";
 
-const HERO_FRAMES = [
-  {
-    key: "exterior",
-    src: HERO_POSTER,
-    alt: HERO_POSTER_ALT,
-  },
-  {
-    key: "kitchen-living",
-    src: "assets/act0/interior-kitchen-living.jpg",
-    alt: "An open-plan living and kitchen space inside a renovated Dutch canal house, with herringbone oak flooring, exposed brick, and warm evening light through tall sash windows.",
-  },
-  {
-    key: "kitchen-island",
-    src: "assets/act0/interior-kitchen-island.jpg",
-    alt: "A marble kitchen island with an integrated induction hob and a cluster of amber blown-glass pendant lights above it.",
-  },
-  {
-    key: "living-room",
-    src: "assets/act0/interior-living-room.jpg",
-    alt: "A cozy living room with a velvet sectional sofa, a travertine coffee table, and warm ambient lighting.",
-  },
-  {
-    key: "bathroom",
-    src: "assets/act0/interior-bathroom.jpg",
-    alt: "A marble bathroom with a backlit oval mirror above a floating stone sink and a frameless glass walk-in shower.",
-  },
+const HERO_FRAME_META = [
+  { key: "exterior", src: HERO_POSTER },
+  { key: "kitchen-living", src: "assets/act0/interior-kitchen-living.jpg", altKey: "kitchenLiving" },
+  { key: "kitchen-island", src: "assets/act0/interior-kitchen-island.jpg", altKey: "kitchenIsland" },
+  { key: "living-room", src: "assets/act0/interior-living-room.jpg", altKey: "livingRoom" },
+  { key: "bathroom", src: "assets/act0/interior-bathroom.jpg", altKey: "bathroom" },
 ];
 
 // [inStart, inEnd, outStart, outEnd] scroll-progress breakpoints per frame.
@@ -53,61 +33,10 @@ const textItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeOut } },
 };
 
-const carpentryServices = ["Custom furniture", "Kitchen", "Cabinetry", "Window and door frames", "Doors", "Ceilings"];
-
-const floorServices = [
-  "Hardwood and parquet flooring",
-  "Tile and natural stone flooring",
-  "Vinyl and laminate flooring",
-  "Underfloor heating installation",
-  "Floor preparation and levelling",
-];
-
-const wallServices = [
-  "Interior and exterior painting",
-  "Wallpaper installation and removal",
-  "Plastering and skimming",
-  "Drywall installation and repairs",
-  "Decorative wall finishes",
-];
-
-const spots = [
-  {
-    key: "floor",
-    label: "Floor",
-    left: "31%",
-    top: "76%",
-    src: "assets/act0/storefront-floor-macro.jpg",
-    backdrop: "assets/act0/storefront-drone.jpg",
-    alt: "Extreme close-up of the light natural stone floor, showing the grain and texture of the material.",
-    head: "Handcrafted flooring.",
-    sub: "Our flooring work:",
-    services: floorServices,
-  },
-  {
-    key: "wall",
-    label: "Wall finishing",
-    left: "89%",
-    top: "42%",
-    src: "assets/act0/storefront-wall-macro.jpg",
-    backdrop: "assets/act0/storefront-drone.jpg",
-    alt: "Extreme close-up of a freshly painted interior wall, showing a smooth, glossy paint finish.",
-    head: "Every wall, finished with care.",
-    sub: "Our wall finishing work:",
-    services: wallServices,
-  },
-  {
-    key: "cabinetry",
-    label: "Carpentry",
-    left: "64%",
-    top: "58%",
-    src: "assets/act0/storefront-cabinetry.jpg",
-    backdrop: "assets/act0/storefront-drone.jpg",
-    alt: "Close-up of custom oak cabinetry showing precise dovetail joinery and blackened-steel hardware.",
-    head: "Custom carpentry.",
-    sub: "Built in-house, joint by joint. Our carpentry work:",
-    services: carpentryServices,
-  },
+const SPOT_META = [
+  { key: "floor", left: "31%", top: "76%", src: "assets/act0/storefront-floor-macro.jpg", backdrop: "assets/act0/storefront-drone.jpg" },
+  { key: "wall", left: "89%", top: "42%", src: "assets/act0/storefront-wall-macro.jpg", backdrop: "assets/act0/storefront-drone.jpg" },
+  { key: "cabinetry", left: "64%", top: "58%", src: "assets/act0/storefront-cabinetry.jpg", backdrop: "assets/act0/storefront-drone.jpg" },
 ];
 
 function HeroFrame({ frame, breakpoints, index, p }) {
@@ -132,17 +61,17 @@ function HeroFrame({ frame, breakpoints, index, p }) {
   );
 }
 
-function HeroSequence({ p }) {
+function HeroSequence({ p, frames }) {
   return (
     <>
-      {HERO_FRAMES.map((frame, i) => (
+      {frames.map((frame, i) => (
         <HeroFrame key={frame.key} frame={frame} breakpoints={FRAME_WINDOWS[i]} index={i} p={p} />
       ))}
     </>
   );
 }
 
-function DetailOverlay({ item, motionEnabled, onClose }) {
+function DetailOverlay({ item, motionEnabled, onClose, closeLabel }) {
   return (
     <motion.div
       className="interior__detail"
@@ -175,7 +104,7 @@ function DetailOverlay({ item, motionEnabled, onClose }) {
         </div>
       </motion.div>
 
-      <button type="button" className="interior__detail-close" onClick={onClose} aria-label="Back to overview">
+      <button type="button" className="interior__detail-close" onClick={onClose} aria-label={closeLabel}>
         &times;
       </button>
     </motion.div>
@@ -187,6 +116,9 @@ const AUTO_TOUR_STEP_MS = 2600;
 const AUTO_TOUR_DWELL_MS = 700;
 
 export function InteriorExperience({ motionEnabled }) {
+  const { t } = useLanguage();
+  const spots = SPOT_META.map((m) => ({ ...m, ...t.interior.spots[m.key] }));
+
   const [active, setActive] = useState(null);
   const activeSpot = spots.find((s) => s.key === active) || null;
 
@@ -261,8 +193,8 @@ export function InteriorExperience({ motionEnabled }) {
   }, [motionEnabled]);
 
   return (
-    <section className="interior" id="craftsmanship" aria-label="Inside DreamWorks: click a spot to see the craftsmanship">
-      <img className="interior__img" src={asset("assets/act0/storefront-drone.jpg")} alt="An elevated, drone-like view of the DreamWorks interior just through the front door: exposed beams, shelving, a bare wall, and the stone floor, all visible in one sweep." />
+    <section className="interior" id="craftsmanship" aria-label={t.interior.ariaLabel}>
+      <img className="interior__img" src={asset("assets/act0/storefront-drone.jpg")} alt={t.interior.droneAlt} />
       <div className="interior__scrim" />
 
       <div className="interior__hotspots">
@@ -273,7 +205,7 @@ export function InteriorExperience({ motionEnabled }) {
             className="interior__hotspot"
             style={{ left: spot.left, top: spot.top }}
             onClick={() => openDetail(spot.key)}
-            aria-label={`See ${spot.label} in detail`}
+            aria-label={spot.label}
           >
             <span className="interior__hotspot-dot" />
             <span className="interior__hotspot-label">{spot.label}</span>
@@ -282,7 +214,9 @@ export function InteriorExperience({ motionEnabled }) {
       </div>
 
       <AnimatePresence>
-        {activeSpot && <DetailOverlay item={activeSpot} motionEnabled={motionEnabled} onClose={closeDetail} />}
+        {activeSpot && (
+          <DetailOverlay item={activeSpot} motionEnabled={motionEnabled} onClose={closeDetail} closeLabel={t.interior.closeLabel} />
+        )}
       </AnimatePresence>
 
       <div ref={sentinelRef} className="interior__sentinel" aria-hidden="true" />
@@ -290,25 +224,26 @@ export function InteriorExperience({ motionEnabled }) {
   );
 }
 
-function StaticHero() {
+function StaticHero({ t }) {
   return (
     <header className="hero hero--static" id="home">
-      <img className="hero__bg" src={asset(HERO_POSTER)} alt={HERO_POSTER_ALT} />
+      <img className="hero__bg" src={asset(HERO_POSTER)} alt={t.hero.posterAlt} />
       <div className="hero__scrim" />
       <p className="hero__caption">
-        One team, every trade,
+        {t.hero.captionLine1}
         <br />
-        under one roof.
+        {t.hero.captionLine2}
       </p>
       <div className="hero__content">
-        <h1 className="hero-build__wordmark">DreamWorks</h1>
-        <p className="hero__subhead">From the sign above the door to everything behind it, one point of contact makes it happen.</p>
+        <h1 className="hero-build__wordmark">{t.hero.wordmark}</h1>
+        <p className="hero__subhead">{t.hero.subhead}</p>
       </div>
     </header>
   );
 }
 
 export default function Act0Hero() {
+  const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const wrapRef = useRef(null);
 
@@ -326,8 +261,14 @@ export default function Act0Hero() {
   const heroTextY = useTransform(p, [0, 0.3], [0, -30]);
 
   if (prefersReducedMotion) {
-    return <StaticHero />;
+    return <StaticHero t={t} />;
   }
+
+  const frames = HERO_FRAME_META.map((m) => ({
+    key: m.key,
+    src: m.src,
+    alt: m.key === "exterior" ? t.hero.posterAlt : t.hero.frameAlts[m.altKey],
+  }));
 
   return (
     <>
@@ -335,7 +276,7 @@ export default function Act0Hero() {
         <div className="hero-build__pin">
           <motion.div className="hero-build__bar" style={{ width: progressWidth }} />
 
-          <HeroSequence p={p} />
+          <HeroSequence p={p} frames={frames} />
           <div className="hero-build__scrim" />
 
           <motion.div
@@ -346,9 +287,9 @@ export default function Act0Hero() {
             animate="show"
           >
             <motion.p variants={textItem}>
-              One team, every trade,
+              {t.hero.captionLine1}
               <br />
-              under one roof.
+              {t.hero.captionLine2}
             </motion.p>
           </motion.div>
 
@@ -360,16 +301,16 @@ export default function Act0Hero() {
             animate="show"
           >
             <motion.h1 className="hero-build__wordmark" variants={textItem}>
-              DreamWorks
+              {t.hero.wordmark}
             </motion.h1>
             <motion.p className="hero__subhead" variants={textItem}>
-              From the sign above the door to everything behind it, one point of contact makes it happen.
+              {t.hero.subhead}
             </motion.p>
           </motion.div>
 
           <motion.div className="hero-build__cue" style={{ opacity: cueOpacity }}>
             <span className="hero-build__mouse" />
-            Scroll to build
+            {t.hero.scrollCue}
           </motion.div>
         </div>
       </header>
